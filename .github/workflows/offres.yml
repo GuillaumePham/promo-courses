@@ -1,0 +1,24 @@
+# Récupère les offres Coupon Network chaque mercredi (nouvelles offres) et jeudi (rattrapage),
+# et met à jour offres.js : l'app en ligne charge ainsi le catalogue à jour sur tous les appareils.
+name: Offres Coupon Network
+
+on:
+  schedule:
+    - cron: "30 9 * * 3,4"   # mercredi et jeudi, 9 h 30 UTC (10 h 30 en hiver, 11 h 30 en été)
+  workflow_dispatch:          # bouton « Run workflow » pour lancer à la main
+
+permissions:
+  contents: write
+
+jobs:
+  offres:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 recuperer_offres.py --silencieux
+      - name: Enregistrer offres.js s'il a changé
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add offres.js
+          git diff --cached --quiet || { git commit -m "Offres Coupon Network du $(date +%d/%m/%Y)" && git push; }

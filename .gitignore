@@ -1,0 +1,7 @@
+# Rien de personnel en ligne : exports / sauvegardes de données, tickets, journal, raccourcis Windows
+*.json
+*.pdf
+*.log
+*.tmp
+*.lnk
+.claude/

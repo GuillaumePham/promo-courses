@@ -1,0 +1,1657 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Promo Courses</title>
+<meta name="theme-color" content="#0f766e">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--fg:#1c1f24;--mut:#6b7280;--line:#e3e6ea;--acc:#0f766e;--on:#fff;--soft:#e7f3f1;--ok:#15803d;--bad:#b91c1c;--zebra:#f6f8f9;--rowhl:#fdf6e3;--colhl:rgba(15,118,110,.12)}
+@media (prefers-color-scheme:dark){:root{--bg:#111316;--card:#1a1d22;--fg:#e8eaed;--mut:#9aa0a6;--line:#2b3037;--acc:#2dd4bf;--on:#062b27;--soft:#14302c;--ok:#4ade80;--bad:#f87171;--zebra:#202429;--rowhl:#2e2a1c;--colhl:rgba(45,212,191,.16)}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--fg)}
+header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:10px 16px}
+header h1{font-size:17px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{max-width:1300px;margin:0 auto;padding:16px}
+main.wide{max-width:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--acc)}
+button.pri{background:var(--acc);border-color:var(--acc);color:var(--on);font-weight:600}
+button.danger{color:var(--bad)}
+button.ico{padding:5px 9px}
+input,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%;min-width:0}
+input:focus,select:focus{outline:2px solid var(--acc);outline-offset:-1px;background:var(--card)}
+.mut{color:var(--mut)} .ok{color:var(--ok)} .bad{color:var(--bad)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.card h2{font-size:16px;margin:0 0 6px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.empty{text-align:center;color:var(--mut);padding:40px 0}
+/* liste des courses */
+.list{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.course{margin:0;display:flex;flex-direction:column;gap:8px}
+.course .ct{display:flex;flex-direction:column}
+.course .ct strong{font-size:16px}
+.course .nums{display:flex;justify-content:space-between;align-items:baseline;font-size:18px;font-weight:600}
+.course .nums .ok{font-size:14px}
+.course .acts{display:flex;gap:6px;justify-content:flex-end}
+/* course */
+.meta{display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:10px}
+.meta label{font-size:12px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
+.sum{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
+.sum div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
+.sum small{color:var(--mut);font-size:12px}
+.sum b{font-size:19px;font-variant-numeric:tabular-nums}
+.sum .hl{background:var(--soft);border-color:var(--acc)}
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:14px}
+table.grid{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.grid th,.grid td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.grid th{font-size:12px;font-weight:600;color:var(--mut);background:var(--card);vertical-align:bottom}
+.grid th small{display:block;font-weight:400}
+.grid th.src{background:var(--soft);color:var(--fg)}
+.grid th:first-child,.grid td.name{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+.grid td.name input{min-width:250px;font-weight:500}
+.grid td input{width:72px;text-align:right}
+.pname{display:flex;gap:8px;align-items:center;width:100%}
+.thumb{width:36px;height:36px;object-fit:contain;background:#fff;border-radius:6px;flex:none}
+.hintbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 10px}
+.hintbar .hint{margin:0}
+.grid td.name input{text-align:left;width:100%}
+.cell{display:inline-flex;flex-direction:column;align-items:flex-end}
+.eq{font-size:11px;color:var(--mut);min-height:0}
+.out{min-width:72px}
+.strong{font-weight:700}
+.gain{color:var(--ok)}
+tfoot td{font-weight:600;background:var(--bg)}
+tfoot tr.glob td{font-weight:400;background:var(--card)}
+tfoot td.name{background:var(--bg)}
+tfoot tr.glob td.name{background:var(--card)}
+.hint{font-size:13px;color:var(--mut);margin:-4px 0 14px}
+/* Lisibilité des grands tableaux : lignes alternées, ligne et colonne en cours surlignées,
+   séparateurs verticaux et en-têtes qui restent visibles (le tableau défile dans son cadre) */
+.grid tbody tr:nth-child(even) td{background:var(--zebra)}
+.grid tbody tr:hover td,.grid tbody tr:focus-within td{background:var(--rowhl)}
+.grid td.colhl,.grid th.colhl{box-shadow:inset 0 0 0 999px var(--colhl)}
+.grid.items th+th,.grid.items td+td,.grid.tk th+th,.grid.tk td+td{border-left:1px solid var(--line)}
+.tablewrap.scroll{max-height:calc(100vh - 110px);overflow:auto}
+.tablewrap.scroll thead th{position:sticky;top:0;z-index:2}
+.tablewrap.scroll thead th:first-child{z-index:3}
+.colbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.chip{border-radius:16px;padding:3px 10px;font-size:13px;color:var(--mut)}
+.chip.on{background:var(--soft);border-color:var(--acc);color:var(--fg)}
+.chk{display:flex;gap:6px;align-items:center;font-size:14px;margin:0 0 10px}
+.chk input{width:auto}
+.warn{color:#b45309}
+@media (prefers-color-scheme:dark){.warn{color:#fbbf24}}
+.detail{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:-4px 0 14px}
+.detail:empty{display:none}
+.course .detail{margin:0}
+.banner{background:var(--card);border:1px solid #b45309;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+.banner button,#bkinfo button{padding:4px 10px;margin:4px 4px 0 0}
+select.st{font-size:12px;padding:1px 4px;width:auto;margin-top:3px;border-radius:10px;color:var(--mut)}
+select.st[data-state=accepte]{color:var(--ok);border-color:var(--ok)}
+select.st[data-state=litige]{color:#b45309;border-color:#b45309}
+select.st[data-state=refuse],select.st[data-state=na]{color:var(--bad);border-color:var(--bad)}
+input.lost{text-decoration:line-through;opacity:.55}
+input.over{border-color:var(--bad);color:var(--bad)}
+#toast[hidden]{display:none}
+.tkname{display:flex;flex-direction:column;gap:2px;width:100%}
+.tkname input{min-width:220px}
+.grid.tk select{font-size:13px;padding:4px 6px}
+/* bilan */
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
+.tiles div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
+.tiles small{color:var(--mut);font-size:12px}
+.tiles b{font-size:20px;font-variant-numeric:tabular-nums}
+.tiles .hl{background:var(--soft);border-color:var(--acc)}
+.card h2 small{font-weight:400;color:var(--mut);font-size:13px}
+.chart{display:flex;align-items:flex-end;gap:4px;height:170px;padding:22px 0 0;border-bottom:1px solid var(--line);position:relative}
+.chart .ymax{position:absolute;top:0;left:0;font-size:11px;color:var(--mut)}
+.chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;cursor:default;max-width:60px}
+.chart .bar{background:var(--acc);border-radius:4px 4px 0 0;min-height:2px}
+.chart .col:hover .bar{opacity:.8}
+.chart .col:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% - 18px);left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);font-size:12px;padding:4px 8px;border-radius:6px;white-space:nowrap;z-index:2;pointer-events:none}
+.xlabels{display:flex;gap:4px;font-size:11px;color:var(--mut);margin-top:4px}
+.xlabels span{flex:1;text-align:center;max-width:60px}
+.deals{margin:0;padding-left:20px}
+.deals li{padding:3px 0}
+.grid.left td,.grid.left th{text-align:left}
+.grid.left td.num,.grid.left th.num{text-align:right}
+#toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;background:var(--fg);color:var(--bg);border-radius:10px;padding:10px 14px;display:flex;gap:14px;align-items:center;box-shadow:0 4px 16px #0004;max-width:calc(100% - 32px);font-size:14px}
+#toast button{background:none;border:0;color:var(--acc);font-weight:700;padding:2px 4px}
+@media (prefers-color-scheme:light){#toast button{color:#5eead4}}
+.tablewrap.flat{border:0;margin-bottom:0}
+/* catalogue */
+textarea{font:inherit;font-size:13px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%;resize:vertical}
+summary{cursor:pointer;font-weight:600;color:var(--acc)}
+.steps{padding-left:20px;font-size:14px}
+.steps a{color:var(--acc);text-decoration:underline}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;gap:8px;align-items:center}
+.filters label{font-size:13px;display:flex;gap:6px;align-items:center}
+.filters label input{width:auto}
+.cat-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.offer{margin:0;display:flex;flex-direction:column;gap:6px}
+.offer h3{font-size:15px;margin:0}
+.ohead{display:flex;gap:10px;align-items:flex-start}
+.oimg{width:64px;height:64px;object-fit:contain;background:#fff;border-radius:8px;flex:none}
+.otop{display:flex;gap:6px;align-items:center;font-size:12px;flex-wrap:wrap}
+.tag{background:var(--soft);color:var(--acc);border-radius:10px;padding:1px 8px;font-weight:600}
+.osub{margin:0;font-size:13px;color:var(--mut);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.orow{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:auto}
+.orow label{font-size:12px;color:var(--mut);display:flex;flex-direction:column;gap:3px;width:110px}
+.orow input{text-align:right}
+.ores{display:flex;flex-direction:column;align-items:flex-end;font-size:18px}
+.ores small{font-size:12px}
+.onet{display:flex;justify-content:space-between;font-size:14px;min-height:20px}
+/* sources */
+.srow{display:grid;grid-template-columns:1fr 70px auto minmax(150px,auto) auto auto auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.srow label{font-size:13px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.srow label input{width:auto}
+.addsrc{display:grid;grid-template-columns:1fr 70px auto auto;gap:6px;align-items:center;margin-top:12px}
+.addsrc label{font-size:13px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.addsrc label input{width:auto}
+@media (max-width:760px){
+  main{padding:12px}
+  .meta{grid-template-columns:1fr 1fr}
+  .meta label:first-child{grid-column:1/-1}
+  .sum{grid-template-columns:1fr 1fr}
+  .tablewrap{overflow:visible;background:none;border:0}
+  .tablewrap.scroll{max-height:none;overflow:visible}
+  .grid tbody tr:nth-child(even) td,.grid tbody tr:hover td,.grid tbody tr:focus-within td{background:none}
+  .grid.items td+td,.grid.tk td+td{border-left:0}
+  table.grid thead{display:none}
+  table.grid,.grid tbody,.grid tfoot,.grid tr,.grid td{display:block;width:100%}
+  .grid tr{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;padding:8px 12px}
+  .grid td{display:flex;justify-content:space-between;align-items:center;gap:12px;border:0;padding:3px 0;position:static}
+  .grid td::before{content:attr(data-label);color:var(--mut);font-size:13px;text-align:left;white-space:normal}
+  .grid td.name::before{display:none}
+  .grid td:empty{display:none}
+  .grid td input{width:110px}
+  .grid td.name input{min-width:0;font-size:16px}
+  .grid td.act{justify-content:flex-end}
+  .grid td.act::before{display:none}
+  tfoot td,tfoot td.name,tfoot tr.glob td,tfoot tr.glob td.name{background:none}
+  tfoot tr{background:var(--soft)!important}
+  .srow{grid-template-columns:1fr 64px auto;row-gap:4px}
+  .srow select[data-sl]{grid-column:1/-1}
+  .addsrc{grid-template-columns:1fr 64px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .filters{grid-template-columns:1fr 1fr}
+  .filters #cq,.filters #cdest{grid-column:1/-1}
+}
+@media (max-width:480px){.lbl{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <button id="back" class="ico" hidden onclick="location.hash='#/'">‹</button>
+  <h1 id="title">Promo Courses</h1>
+  <button data-act="go-bilan" id="bilbtn" title="Bilan et statistiques">📊<span class="lbl"> Bilan</span></button>
+  <button data-act="go-catalogue" id="catbtn" title="Catalogue d'offres">🏷<span class="lbl"> Offres</span></button>
+  <button data-act="go-sources" id="srcbtn" title="Sources de remise">⚙<span class="lbl"> Sources</span></button>
+</header>
+<main id="main"></main>
+<div id="toast" hidden><span id="toastmsg"></span><button data-act="undo">Annuler</button></div>
+<input type="file" id="importfile" accept=".json,application/json" hidden>
+<input type="file" id="cnfile" accept=".json,.txt,application/json,text/plain" hidden>
+<input type="file" id="tkfile" accept=".pdf,application/pdf" hidden>
+<!-- Écrit par recuperer_offres.py ; absent tant que le script n'a pas tourné -->
+<script src="offres.js"></script>
+<script>
+const KEY = 'promo-courses-v1';
+const $ = s => document.querySelector(s);
+const main = $('#main');
+const uid = () => Math.random().toString(36).slice(2, 10);
+const EUR = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+const PCT = new Intl.NumberFormat('fr-FR', { style: 'percent', maximumFractionDigits: 1 });
+const eur = n => EUR.format(n || 0);
+const pct = n => PCT.format(n || 0);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.').replace(/[^\d.\-]/g, '')); return isFinite(n) ? n : 0; };
+// Date locale (et non UTC : sinon entre minuit et 1-2 h du matin on obtient la veille)
+const isoDay = d => new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const today = () => isoDay(new Date());
+const fdate = d => d ? new Date(d + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : '';
+
+// ---------- Données ----------
+function seed() {
+  const mk = (name, unit, deferred = false) => ({ id: uid(), name, unit, deferred, archived: false });
+  return {
+    sources: [
+      mk('Promo magasin', '%'),
+      mk('Coupons', '€'),
+      mk('Cagnotte fidélité', '€'),
+      mk('Shopmium', '€', true),
+      mk('iGraal', '%', true),
+    ],
+    courses: [],
+  };
+}
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { }
+if (!S || !Array.isArray(S.sources)) S = seed();
+let saveWarned = false, backupDir = null, backupTimer = null;
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch (e) {
+    if (!saveWarned) {
+      saveWarned = true;
+      alert("Attention : l'enregistrement a échoué (stockage plein ou navigation privée). Exporte tes données depuis ⚙ Sources pour ne rien perdre.");
+    }
+    return;
+  }
+  scheduleAutoBackup();
+}
+
+// Un autre onglet de l'app a enregistré : on reprend ses données pour ne pas les écraser
+window.addEventListener('storage', e => {
+  if (e.key !== KEY || !e.newValue) return;
+  try { S = JSON.parse(e.newValue); route(); } catch { }
+});
+
+// ---------- Sauvegarde ----------
+// Les données ne vivent que dans le navigateur : rappel d'export, et sur Chrome/Edge
+// sauvegarde automatique dans un dossier choisi une fois.
+const BK_KEY = KEY + '-lastbackup';
+const BK_FILE = 'sauvegarde-promo-courses.json';
+const canAutoBackup = 'showDirectoryPicker' in window;
+const lastBackup = () => { try { return localStorage.getItem(BK_KEY); } catch { return null; } };
+function markBackup() { try { localStorage.setItem(BK_KEY, new Date().toISOString()); } catch { } }
+
+// Le dossier choisi est gardé dans IndexedDB (il ne peut pas aller dans localStorage)
+function idb(mode, fn) {
+  return new Promise((res, rej) => {
+    const rq = indexedDB.open('promo-courses', 1);
+    rq.onupgradeneeded = () => rq.result.createObjectStore('kv');
+    rq.onerror = () => rej(rq.error);
+    rq.onsuccess = () => {
+      const tx = rq.result.transaction('kv', mode), r = fn(tx.objectStore('kv'));
+      tx.oncomplete = () => res(r?.result);
+      tx.onerror = () => rej(tx.error);
+    };
+  });
+}
+async function loadBackupDir() { try { backupDir = await idb('readonly', s => s.get('dir')) || null; } catch { } }
+// 'on' = écrit à chaque modification, 'paused' = le navigateur redemande l'autorisation (après un redémarrage)
+async function backupState() {
+  if (!backupDir) return 'off';
+  try { return await backupDir.queryPermission({ mode: 'readwrite' }) === 'granted' ? 'on' : 'paused'; } catch { return 'off'; }
+}
+function scheduleAutoBackup() {
+  if (!backupDir) return;
+  clearTimeout(backupTimer);
+  backupTimer = setTimeout(writeBackup, 2000);
+}
+async function writeBackup() {
+  if (await backupState() !== 'on') return false;
+  try {
+    const w = await (await backupDir.getFileHandle(BK_FILE, { create: true })).createWritable();
+    await w.write(JSON.stringify(S, null, 2)); await w.close();
+    markBackup(); return true;
+  } catch { return false; }
+}
+async function enableAutoBackup() {
+  try {
+    backupDir = await window.showDirectoryPicker({ id: 'promo-courses', mode: 'readwrite' });
+    await idb('readwrite', s => s.put(backupDir, 'dir'));
+    if (await writeBackup()) alert(`Sauvegarde automatique activée : « ${BK_FILE} » sera mis à jour dans le dossier « ${backupDir.name} » à chaque modification.`);
+  } catch { }
+}
+async function resumeAutoBackup() {
+  try { if (await backupDir.requestPermission({ mode: 'readwrite' }) === 'granted') await writeBackup(); } catch { }
+}
+// Bandeau sur l'accueil + état dans ⚙ Sources
+async function refreshBackupUi() {
+  const st = await backupState(), lb = lastBackup();
+  const days = lb ? Math.floor((Date.now() - new Date(lb)) / 864e5) : null;
+  const when = days === null ? 'jamais' : days === 0 ? "aujourd'hui" : `il y a ${days} jour${days > 1 ? 's' : ''}`;
+  const enableBtn = canAutoBackup ? ' <button data-act="bk-enable">Sauvegarde automatique…</button>' : '';
+  const banner = $('#bkbanner');
+  if (banner) {
+    let html = '';
+    if (st === 'paused') html = `Sauvegarde automatique en pause (le navigateur redemande l'autorisation après un redémarrage). <button data-act="bk-resume">Réactiver</button>`;
+    else if (st === 'off' && S.courses.length && (days === null || days >= 7))
+      html = `⚠ Dernière sauvegarde : ${when}. Tes données ne sont que dans ce navigateur. <button data-act="export">Sauvegarder maintenant</button>${enableBtn}`;
+    banner.innerHTML = html; banner.hidden = !html;
+  }
+  const info = $('#bkinfo');
+  const label = st === 'on' ? `active (dossier « ${esc(backupDir.name)} »)` : st === 'paused' ? 'en pause' : 'désactivée';
+  if (info) info.innerHTML = `Dernière sauvegarde : <b>${when}</b>. Sauvegarde automatique : <b>${label}</b>.
+    ${st === 'paused' ? '<button data-act="bk-resume">Réactiver</button>' : st === 'off' ? enableBtn : ''}`;
+}
+
+// Une case de remise : "20%" = pourcentage, "1,5€" = montant, sinon l'unité par défaut de la source.
+function unitOf(raw, src) {
+  const s = String(raw ?? '').trim();
+  if (/%$/.test(s)) return '%';
+  if (/€$/.test(s)) return '€';
+  return src.unit;
+}
+function disc(raw, src, base) {
+  if (!String(raw ?? '').trim()) return 0;
+  const n = num(raw);
+  return unitOf(raw, src) === '%' ? base * n / 100 : n;
+}
+
+const filled = v => String(v ?? '').trim() !== '';
+const usedIn = (c, s) => c.items.some(it => filled(it.d?.[s.id])) || filled(c.global?.[s.id]);
+// Colonnes affichées dans le tableau (option « masquer les colonnes vides »)
+function visibleCols(c) {
+  const cols = colsFor(c);
+  const off = S.ui?.hiddenCols || [];
+  return cols.filter(s => !off.includes(s.id) && (!S.ui?.hideEmpty || usedIn(c, s)));
+}
+
+// Valeur recopiée d'une source à une autre, en gardant l'unité d'origine si elles diffèrent
+function withUnit(v, from, to) {
+  if (!filled(v)) return '';
+  const u = unitOf(v, from);
+  return u === to.unit ? v : String(v).trim().replace(/[%€]$/, '') + u;
+}
+// Sources liées (« même remise que ») : on recopie la remise, sauf si leur case a été modifiée à la main.
+// Renvoie les sources mises à jour.
+function copyLinked(d, masterId, prev) {
+  const m = S.sources.find(s => s.id === masterId), changed = [];
+  for (const s of S.sources) {
+    if (s.copyFrom !== masterId || s.archived) continue;
+    const cur = d[s.id] ?? '';
+    if (filled(cur) && cur !== withUnit(prev, m, s)) continue;
+    d[s.id] = withUnit(d[masterId], m, s);
+    changed.push(s.id);
+  }
+  return changed;
+}
+
+// Sources affichées pour une course : actives + archivées encore utilisées dans cette course
+function colsFor(c) {
+  return S.sources.filter(s => !s.archived || c.items.some(it => String(it.d?.[s.id] ?? '').trim()) || String(c.global?.[s.id] ?? '').trim());
+}
+
+// Statut du cashback (sources différées) : « refusé » et « non disponible » ne sont pas comptés
+const ST = { attente: 'En attente', accepte: 'Accepté', litige: 'En litige', refuse: 'Refusé', na: 'Non dispo' };
+const LOST = ['refuse', 'na'];
+const newCb = () => ({ accepte: 0, attente: 0, litige: 0, perdu: 0 });
+// Ajoute une remise différée au bilan cashback et renvoie la part réellement comptée
+function addCb(cb, st, v) {
+  if (LOST.includes(st)) { cb.perdu += v; return 0; }
+  cb[st] += v; return v;
+}
+
+function calcItem(it, cols) {
+  const qty = String(it.qty ?? '').trim() === '' ? 1 : num(it.qty);
+  const base = num(it.price) * qty;
+  const per = {}, cb = newCb();
+  let tot = 0, now = 0;
+  for (const s of cols) {
+    let v = disc(it.d?.[s.id], s, base);
+    if (s.deferred) v = addCb(cb, it.st?.[s.id] || 'attente', v);
+    per[s.id] = v; tot += v;
+    if (!s.deferred) now += v;
+  }
+  const final = base - tot;
+  return { id: it.id, qty, base, per, cb, disc: tot, now, final, unit: qty ? final / qty : 0, pct: base ? tot / base : 0 };
+}
+
+// Bon d'achat acheté avec décote : le gain est proportionnel au montant utilisé sur cette course
+function calcVoucher(v) {
+  const val = num(v.value), paid = num(v.paid);
+  const asked = String(v.used ?? '').trim() === '' ? val : num(v.used);
+  // On ne peut pas utiliser plus que la valeur du bon : le surplus est ignoré (et signalé)
+  const used = Math.min(asked, val), over = asked > val;
+  const rate = val ? (val - paid) / val : 0;
+  return { id: v.id, val, paid, used, over, rate, gain: used * rate };
+}
+
+function calcCourse(c) {
+  const cols = colsFor(c);
+  const rows = c.items.map(it => calcItem(it, cols));
+  const r = { cols, rows, base: 0, disc: 0, now: 0, per: {}, gper: {}, gdisc: 0, cb: newCb() };
+  cols.forEach(s => r.per[s.id] = 0);
+  for (const x of rows) {
+    r.base += x.base; r.disc += x.disc; r.now += x.now;
+    cols.forEach(s => r.per[s.id] += x.per[s.id]);
+    for (const k in r.cb) r.cb[k] += x.cb[k];
+  }
+  // Remises sur le ticket : les % s'appliquent au montant après remises immédiates des produits
+  const gBase = r.base - r.now;
+  for (const s of cols) {
+    let v = disc(c.global?.[s.id], s, gBase);
+    if (s.deferred) v = addCb(r.cb, c.gst?.[s.id] || 'attente', v);
+    r.gper[s.id] = v; r.gdisc += v; r.per[s.id] += v; r.disc += v;
+    if (!s.deferred) r.now += v;
+  }
+  r.vouchers = (c.vouchers || []).map(calcVoucher);
+  r.vgain = r.vouchers.reduce((a, v) => a + v.gain, 0);
+  r.caisse = r.base - r.now;
+  // Cashback attendu (remises différées, hors refusé / non dispo), rapporté au montant payé en caisse
+  r.cbTotal = r.cb.accepte + r.cb.attente + r.cb.litige;
+  r.cbPct = r.caisse > 0 ? r.cbTotal / r.caisse : 0;
+  r.saved = r.disc + r.vgain;
+  r.final = r.base - r.saved;
+  r.pct = r.base ? r.saved / r.base : 0;
+  return r;
+}
+
+// ---------- Navigation ----------
+function setHeader(t, back) {
+  main.classList.toggle('wide', location.hash.startsWith('#/course/'));
+  $('#title').textContent = t;
+  $('#back').hidden = !back;
+  $('#srcbtn').hidden = location.hash.startsWith('#/sources');
+  $('#catbtn').hidden = location.hash.startsWith('#/catalogue');
+  $('#bilbtn').hidden = location.hash.startsWith('#/bilan');
+}
+function current() {
+  const h = location.hash.split('/');
+  return h[1] === 'course' ? S.courses.find(c => c.id === h[2]) : null;
+}
+function route() {
+  const h = location.hash.split('/');
+  const c = current();
+  if (c) return renderCourse(c);
+  if (h[1] === 'sources') return renderSources();
+  if (h[1] === 'catalogue') return renderCatalogue();
+  if (h[1] === 'bilan') return renderBilan();
+  if (h[1] === 'ticket') return renderTicket();
+  renderList();
+}
+window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+
+// ---------- Vue : liste des courses ----------
+function renderList() {
+  setHeader('Mes courses', false);
+  const cs = [...S.courses].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  main.innerHTML = `
+    <div class="banner" id="bkbanner" hidden></div>
+    <div class="bar"><button class="pri" data-act="new-course">+ Nouvelle course</button><button data-act="tk-import">📄 Importer un ticket PDF</button></div>
+    ${cs.length ? `<div class="list">${cs.map(c => {
+      const r = calcCourse(c);
+      return `<article class="card course" data-cid="${c.id}">
+        <a class="ct" href="#/course/${c.id}">
+          <strong>${esc(c.name || 'Sans nom')}</strong>
+          <span class="mut">${fdate(c.date)}${c.store ? ' · ' + esc(c.store) : ''} · ${c.items.length} produit${c.items.length > 1 ? 's' : ''}</span>
+        </a>
+        <a class="nums" href="#/course/${c.id}"><span>${eur(r.final)}</span><span class="ok">−${eur(r.saved)} (${pct(r.pct)})</span></a>
+        ${r.cb.attente + r.cb.litige ? `<span class="detail">${r.cb.attente ? `<span>⏳ ${eur(r.cb.attente)} en attente</span>` : ''}${r.cb.litige ? `<span class="warn">⚠ ${eur(r.cb.litige)} en litige</span>` : ''}</span>` : ''}
+        <div class="acts">
+          <button data-act="dup-course">Dupliquer</button>
+          <button data-act="del-course" class="danger">Supprimer</button>
+        </div>
+      </article>`;
+    }).join('')}</div>` : `<p class="empty">Aucune course pour l'instant.<br>Crée ta première liste !</p>`}`;
+  refreshBackupUi();
+}
+
+// ---------- Vue : une course ----------
+function renderCourse(c) {
+  setHeader(c.name || 'Course', true);
+  // Le catalogue ajoute dans la dernière course ouverte (ou créée), pas dans une ancienne restée sélectionnée
+  if (catOpts().dest !== c.id) { catOpts().dest = c.id; save(); }
+  const all = colsFor(c), cols = visibleCols(c), hidden = all.length - cols.length;
+  // Vignettes : reprises du catalogue pour les produits qui n'en ont pas encore (puis gardées dans l'historique)
+  const imgs = new Map((S.catalog?.offers || []).map(x => [okey(x.title), x.img]));
+  let found = false;
+  c.items.forEach(it => { if (!it.img && imgs.get(okey(it.name))) { it.img = imgs.get(okey(it.name)); found = true; } });
+  if (found) save();
+  const stSel = (s, attr, st = 'attente') => s.deferred ? `<select class="st" ${attr}="${s.id}" data-state="${st}" title="Statut du cashback">
+      ${Object.entries(ST).map(([k, l]) => `<option value="${k}" ${k === st ? 'selected' : ''}>${l}</option>`).join('')}</select>` : '';
+  const srcCell = (s, attr, val, stAttr, st) => `<td data-label="${esc(s.name)} (${s.unit})"><span class="cell">
+      <input ${attr}="${s.id}" inputmode="decimal" placeholder="—" value="${esc(val)}">${stSel(s, stAttr, st)}<small class="eq" data-o="eq-${s.id}"></small></span></td>`;
+  const vs = c.vouchers || [];
+  // Filtre par source : seulement les produits avec une remise de cette source (ou d'une source liée).
+  // Les lignes vides (produit en cours d'ajout) restent visibles.
+  if (S.ui?.onlyCnRows) { S.ui.rowSrc = cnGroup()[0] || ''; delete S.ui.onlyCnRows; }   // ancien réglage
+  const focus = all.find(s => s.id === S.ui?.rowSrc), grp = focus ? srcGroup(focus.id) : [];
+  const has = (it, ids) => ids.some(id => filled(it.d?.[id]));
+  const shown = c.items.filter(it => !focus || (!it.name && !it.price) || has(it, grp));
+  const hiddenRows = c.items.length - shown.length;
+  const counts = all.map(s => ({ s, n: c.items.filter(it => has(it, srcGroup(s.id))).length })).filter(x => x.n || x.s === focus);
+  main.innerHTML = `
+    <section class="card meta">
+      <label>Nom<input data-c="name" value="${esc(c.name)}"></label>
+      <label>Date<input type="date" data-c="date" value="${esc(c.date)}"></label>
+      <label>Magasin<input data-c="store" value="${esc(c.store)}" placeholder="ex. Carrefour"></label>
+    </section>
+    <section class="sum">
+      <div><small>Prix d'origine</small><b data-o="s-base"></b></div>
+      <div><small>Remises totales</small><b class="ok" data-o="s-disc"></b></div>
+      <div><small>À payer en caisse</small><b data-o="s-caisse"></b></div>
+      <div class="hl"><small>Coût final (après remboursements)</small><b data-o="s-final"></b></div>
+      <div><small>Économie</small><b class="ok" data-o="s-pct"></b></div>
+      <div title="Cashback attendu (en attente, en litige ou reçu) rapporté au montant payé en caisse"><small>Cashback</small><b class="ok" data-o="s-cbpct"></b><small data-o="s-cb"></small></div>
+    </section>
+    <p class="detail" data-o="s-detail"></p>
+    <p class="hint">Astuce : dans une case de remise, tape <b>20%</b> ou <b>1,50€</b> pour forcer l'unité. Les remises sont pour la ligne entière (prix × quantité).</p>
+    <div class="colbar">
+      <span class="mut" style="font-size:13px">Colonnes affichées :</span>
+      ${all.map(s => `<button class="chip ${(S.ui?.hiddenCols || []).includes(s.id) ? '' : 'on'}" data-act="col-toggle" data-col="${s.id}">${esc(s.name)}</button>`).join('')}
+      <button class="chip" data-act="cols-all">Toutes</button>
+      <button class="chip ${S.ui?.hideEmpty ? 'on' : ''}" data-act="toggle-cols">Masquer les vides</button>
+      ${hidden ? `<span class="mut" style="font-size:13px">${hidden} masquée${hidden > 1 ? 's' : ''} (toujours comptée${hidden > 1 ? 's' : ''} dans les totaux)</span>` : ''}
+    </div>
+    <div class="colbar">
+      <span class="mut" style="font-size:13px">Seulement les produits :</span>
+      <button class="chip ${focus ? '' : 'on'}" data-act="src-filter" data-col="">Tous</button>
+      ${counts.map(({ s, n }) => `<button class="chip ${s === focus ? 'on' : ''}" data-act="src-filter" data-col="${s.id}"
+        title="Produits avec une remise ${esc(s.name)}${S.sources.some(x => x.copyFrom === s.id) ? ' (ou d\'une source liée)' : ''}, et seulement ses colonnes">${esc(s.name)} (${n})</button>`).join('')}
+      ${hiddenRows ? `<span class="mut" style="font-size:13px">${hiddenRows} produit${hiddenRows > 1 ? 's' : ''} masqué${hiddenRows > 1 ? 's' : ''} (toujours compté${hiddenRows > 1 ? 's' : ''} dans les totaux)</span>` : ''}
+    </div>
+    <div class="tablewrap scroll"><table class="grid items">
+      <thead><tr>
+        <th>Produit</th><th>Qté</th><th>Prix unit.</th>
+        ${cols.map(s => `<th class="src">${esc(s.name)}<small>${s.unit}${s.deferred ? ' · différé' : ''}</small></th>`).join('')}
+        <th>Remise</th><th>Prix final</th><th>Final / u</th><th>%</th><th></th>
+      </tr></thead>
+      <tbody>${shown.map(it => `<tr data-item="${it.id}">
+        <td class="name" data-label="Produit"><span class="pname">${it.img ? `<img class="thumb" src="${esc(it.img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}<input data-f="name" value="${esc(it.name)}" title="${esc(it.name)}" placeholder="Nom du produit"></span></td>
+        <td data-label="Quantité"><input data-f="qty" inputmode="decimal" value="${esc(it.qty)}"></td>
+        <td data-label="Prix unitaire (€)"><input data-f="price" inputmode="decimal" placeholder="0,00" value="${esc(it.price)}"></td>
+        ${cols.map(s => srcCell(s, 'data-src', it.d?.[s.id] ?? '', 'data-st', it.st?.[s.id])).join('')}
+        <td class="out" data-label="Remise totale" data-o="disc"></td>
+        <td class="out strong" data-label="Prix final" data-o="final"></td>
+        <td class="out" data-label="Prix final / unité" data-o="unit"></td>
+        <td class="out ok" data-label="Économie" data-o="pct"></td>
+        <td class="act"><button class="ico danger" data-act="del-item" title="Supprimer le produit">✕</button></td>
+      </tr>`).join('')}</tbody>
+      <tfoot>
+        <tr class="glob">
+          <td class="name" data-label="">Remises sur le ticket</td><td></td><td></td>
+          ${cols.map(s => srcCell(s, 'data-g', c.global?.[s.id] ?? '', 'data-gst', c.gst?.[s.id])).join('')}
+          <td class="out" data-label="Remise ticket" data-o="g-disc"></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td class="name" data-label="">Total produits</td><td></td>
+          <td class="out" data-label="Prix d'origine" data-o="t-base"></td>
+          ${cols.map(s => `<td class="out" data-label="${esc(s.name)}" data-o="t-${s.id}"></td>`).join('')}
+          <td class="out" data-label="Remise totale" data-o="t-disc"></td>
+          <td class="out strong" data-label="Coût (hors bons d'achat)" data-o="t-final"></td><td></td>
+          <td class="out ok" data-label="Économie" data-o="t-pct"></td><td></td>
+        </tr>
+      </tfoot>
+    </table></div>
+    <div class="bar"><button class="pri" data-act="add-item">+ Produit</button></div>
+    <section class="card">
+      <h2>Bons d'achat utilisés</h2>
+      <p class="mut">Bons ou cartes cadeaux achetés moins cher que leur valeur. Le gain est compté au prorata du montant utilisé sur cette course (laisse « Utilisé ici » vide si tout le bon y passe).</p>
+      ${vs.length ? `<div class="tablewrap flat"><table class="grid">
+        <thead><tr><th>Bon d'achat</th><th>Valeur</th><th>Prix payé</th><th>Utilisé ici</th><th>Décote</th><th>Gain</th><th></th></tr></thead>
+        <tbody>${vs.map(v => `<tr data-vid="${v.id}">
+          <td class="name" data-label="Bon"><input data-v="name" value="${esc(v.name)}" placeholder="ex. Carte cadeau Carrefour"></td>
+          <td data-label="Valeur faciale (€)"><input data-v="value" inputmode="decimal" placeholder="50" value="${esc(v.value)}"></td>
+          <td data-label="Prix payé (€)"><input data-v="paid" inputmode="decimal" placeholder="45" value="${esc(v.paid)}"></td>
+          <td data-label="Utilisé ici (€)"><input data-v="used" inputmode="decimal" placeholder="tout" value="${esc(v.used)}"></td>
+          <td class="out" data-label="Décote" data-o="vrate"></td>
+          <td class="out ok strong" data-label="Gain" data-o="vgain"></td>
+          <td class="act"><button class="ico danger" data-act="del-v" title="Supprimer le bon">✕</button></td>
+        </tr>`).join('')}</tbody>
+        <tfoot><tr><td class="name" data-label="">Total bons</td><td></td><td></td><td></td><td></td>
+          <td class="out ok" data-label="Gain total" data-o="v-total"></td><td></td></tr></tfoot>
+      </table></div>` : ''}
+      <div class="bar" style="margin:8px 0 0"><button data-act="add-v">+ Bon d'achat</button></div>
+    </section>`;
+  updateOut(c);
+}
+
+function setO(root, key, txt, cls) {
+  const e = root.querySelector(`[data-o="${key}"]`);
+  if (!e) return;
+  e.textContent = txt;
+  if (cls !== undefined) e.classList.toggle('gain', cls);
+}
+// Case de remise : équivalent en € pour les %, et barré si le cashback est refusé / indisponible
+function eqCell(root, s, raw, v, st) {
+  const lost = s.deferred && LOST.includes(st);
+  const filled = String(raw ?? '').trim();
+  root.querySelector(`input[data-src="${s.id}"], input[data-g="${s.id}"]`)?.classList.toggle('lost', !!(lost && filled));
+  setO(root, 'eq-' + s.id, !filled ? '' : lost ? 'non compté' : unitOf(raw, s) === '%' ? '= ' + eur(v) : '');
+}
+function detailHtml(r) {
+  const p = [];
+  const cb = r.cb;
+  if (cb.accepte) p.push(`<span class="ok">✓ ${eur(cb.accepte)} cashback reçu</span>`);
+  if (cb.attente) p.push(`<span>⏳ ${eur(cb.attente)} en attente</span>`);
+  if (cb.litige) p.push(`<span class="warn">⚠ ${eur(cb.litige)} en litige</span>`);
+  if (cb.perdu) p.push(`<span class="bad">✕ ${eur(cb.perdu)} perdu (refusé / non dispo)</span>`);
+  if (r.vgain) p.push(`<span class="ok">🎟 ${eur(r.vgain)} gagnés sur les bons d'achat</span>`);
+  return p.join('');
+}
+function updateOut(c) {
+  const r = calcCourse(c);
+  for (const x of r.rows) {
+    const tr = main.querySelector(`tr[data-item="${x.id}"]`);
+    if (!tr) continue;
+    const it = c.items.find(i => i.id === x.id);
+    setO(tr, 'disc', x.disc ? eur(x.disc) : '—');
+    setO(tr, 'final', eur(x.final), x.final < 0);
+    setO(tr, 'unit', eur(x.unit), x.unit < 0);
+    setO(tr, 'pct', x.base ? pct(x.pct) : '—');
+    for (const s of r.cols) eqCell(tr, s, it.d?.[s.id], x.per[s.id], it.st?.[s.id]);
+  }
+  const g = main.querySelector('tr.glob');
+  if (g) {
+    for (const s of r.cols) eqCell(g, s, c.global?.[s.id], r.gper[s.id], c.gst?.[s.id]);
+    setO(g, 'g-disc', r.gdisc ? eur(r.gdisc) : '—');
+  }
+  for (const v of r.vouchers) {
+    const tr = main.querySelector(`tr[data-vid="${v.id}"]`);
+    if (!tr) continue;
+    setO(tr, 'vrate', v.val ? pct(v.rate) : '—');
+    const u = tr.querySelector('input[data-v="used"]');
+    u.classList.toggle('over', v.over);
+    u.title = v.over ? `Plus que la valeur du bon : seuls ${eur(v.val)} sont comptés` : '';
+    setO(tr, 'vgain', eur(v.gain));
+  }
+  setO(main, 'v-total', eur(r.vgain));
+  setO(main, 't-base', eur(r.base));
+  r.cols.forEach(s => setO(main, 't-' + s.id, r.per[s.id] ? eur(r.per[s.id]) : '—'));
+  setO(main, 't-disc', eur(r.disc));
+  setO(main, 't-final', eur(r.base - r.disc), r.base - r.disc < 0);
+  setO(main, 't-pct', pct(r.base ? r.disc / r.base : 0));
+  setO(main, 's-base', eur(r.base));
+  setO(main, 's-disc', '−' + eur(r.saved));
+  const d = main.querySelector('[data-o="s-detail"]');
+  if (d) d.innerHTML = detailHtml(r);
+  setO(main, 's-caisse', eur(r.caisse));
+  setO(main, 's-final', eur(r.final));
+  setO(main, 's-pct', pct(r.pct));
+  setO(main, 's-cbpct', pct(r.cbPct));
+  setO(main, 's-cb', `${eur(r.cbTotal)} sur ${eur(r.caisse)} payés`);
+}
+
+// ---------- Vue : catalogue d'offres Coupon Network ----------
+// L'API publique du site ; elle ne s'appelle pas depuis l'app (navigateur), d'où le copier-coller.
+const CN_URL = 'https://www.couponnetwork.fr/api/offer/offersList?retailerId=15&skipMember=true';
+// Le prix saisi est retenu par intitulé d'offre, pour être réutilisé quand l'offre revient
+const okey = t => String(t).toLowerCase().replace(/\s+/g, ' ').trim();
+const catOpts = () => S.catOpts ||= { q: '', cat: '', sort: 'pct', priced: false, bonus: true, dest: '' };
+
+function parseOffers(txt) {
+  // Tolère le texte copié depuis la visionneuse JSON du navigateur (libellés autour du JSON)
+  return offersFrom(JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)));
+}
+function offersFrom(d) {
+  const items = d?.offers?.items;
+  if (!Array.isArray(items)) throw new Error('format');
+  // discount_type 0 = montant en € ; les autres types éventuels sont ignorés faute de savoir les calculer
+  return items.filter(o => o?.title && o.discount_type === 0).map(o => ({
+    id: o.id, title: String(o.title).trim(), sub: o.subtitle || '',
+    value: num(o.discount_value), bonus: num(o.quizz?.amount), units: o.required_units || 1,
+    end: o.ended_at || '', cat: o.categories?.[0]?.name || 'Autre', img: smallImg(o.picture_url),
+  }));
+}
+// Vignette basse qualité (120 px) à partir de l'image Cloudinary de l'offre
+const smallImg = u => u ? String(u).replace(/f_auto,q_auto,w_\d+(,h_\d+)?/, 'f_auto,q_auto:low,w_120,h_120') : '';
+// Version du format du catalogue : un catalogue plus ancien est relu depuis offres.js (ajout des images)
+const CAT_V = 3;
+
+function calcOffer(x) {
+  const price = num(S.prices?.[okey(x.title)]);
+  const line = price * x.units;
+  const red = x.value + (catOpts().bonus ? x.bonus : 0);
+  const net = line - red;
+  return { price, line, red, net, unit: net / x.units, pct: line ? red / line : 0 };
+}
+
+function cnSource() {
+  let s = S.sources.find(s => /coupon\s*network/i.test(s.name));
+  if (!s) { s = { id: uid(), name: 'Coupon Network', unit: '€', deferred: true, archived: false }; S.sources.push(s); }
+  s.archived = false;
+  return s;
+}
+
+const fr2 = n => n.toFixed(2).replace('.', ',');
+// Une source + celles qui reprennent sa remise (« même remise que »)
+const srcGroup = id => [id, ...S.sources.filter(s => s.copyFrom === id).map(s => s.id)];
+// Coupon Network + les sources qui reprennent sa remise (iGraal, eBuyClub…)
+function cnGroup() {
+  const cn = S.sources.find(s => /coupon\s*network/i.test(s.name));
+  return cn ? srcGroup(cn.id) : [];
+}
+// Applique une offre Coupon Network à une ligne. Le bonus quiz n'existe que sur Coupon Network :
+// les sources liées reçoivent la remise de base.
+function applyOffer(d, o) {
+  const cn = cnSource();
+  d[cn.id] = fr2(o.value + (catOpts().bonus ? o.bonus : 0));
+  for (const s of S.sources) if (s.copyFrom === cn.id && !s.archived) d[s.id] = withUnit(fr2(o.value), cn, s);
+}
+// Offre Coupon Network d'un produit : choisie depuis le catalogue ou le ticket, retenue pour son libellé
+// de ticket, ou de même nom. Retenue sur le produit pour quand l'offre aura quitté le catalogue.
+function offerOf(it) {
+  const offers = new Map((S.catalog?.offers || []).map(o => [okey(o.title), o]));
+  const o = offers.get(it.offer) || offers.get(S.offerLinks?.[okey(it.label || '')]) || offers.get(okey(it.name || ''));
+  if (o && !it.offer) it.offer = okey(o.title);
+  return o;
+}
+// Montant Coupon Network qui inclut le bonus quiz de l'offre : les sources liées n'ont droit qu'à la remise de base
+const withQuiz = (o, v) => !!o?.bonus && Math.abs(num(v) - (o.value + o.bonus)) < 0.005;
+
+// Les nouvelles offres sortent le mercredi : date du dernier mercredi (aujourd'hui compris)
+function lastWednesday() {
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - (d.getDay() + 4) % 7);
+  return d;
+}
+
+// offres.js est écrit par recuperer_offres.py ; on l'adopte s'il est plus récent que le catalogue
+function syncOffersFile() {
+  const f = window.CN_OFFERS;
+  if (!f?.fetchedAt) return;
+  if (S.catalog?.v === CAT_V && new Date(S.catalog.at) >= new Date(f.fetchedAt)) return;
+  try { S.catalog = { v: CAT_V, at: f.fetchedAt, offers: offersFrom(f), auto: true }; save(); } catch { }
+}
+
+function renderCatalogue() {
+  setHeader("Catalogue d'offres", true);
+  const cat = S.catalog, o = catOpts();
+  // Périmé = antérieur au dernier mercredi, une fois passée l'heure de la récupération automatique (10 h)
+  const wed = lastWednesday(), ran = new Date(wed); ran.setHours(10, 30);
+  const stale = !cat || (new Date(cat.at) < wed && new Date() >= ran);
+  const live = cat ? cat.offers.filter(x => !x.end || x.end >= today()) : [];
+  const cats = [...new Set(live.map(x => x.cat))].sort();
+  const courses = [...S.courses].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (!courses.some(c => c.id === o.dest)) o.dest = courses[0]?.id || '';
+  main.innerHTML = `
+    <section class="card">
+      <h2>Offres Coupon Network</h2>
+      <p class="mut">${cat ? `${live.length} offres en cours · importées le ${new Date(cat.at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}` : 'Aucune offre importée pour le moment.'}
+      Saisis le prix Carrefour d'un produit une fois : il est retenu pour les prochaines fois.</p>
+      ${stale && cat ? `<p class="warn">De nouvelles offres sont sorties mercredi : mets à jour le catalogue.</p>` : ''}
+      <details ${stale ? 'open' : ''}><summary>Mettre à jour les offres</summary>
+        <p class="mut" style="font-size:14px"><b>Sur le PC :</b> c'est automatique le mercredi et le jeudi à 10 h. Pour forcer, double-clique sur « Recuperer les offres.bat » dans le dossier de l'app, puis recharge cette page (F5).</p>
+        <p class="mut" style="font-size:14px;margin-bottom:0"><b>Ailleurs (téléphone…) :</b></p>
+        <ol class="mut steps">
+          <li>Ouvre <a href="${CN_URL}" target="_blank" rel="noopener">la liste des offres</a> (une page de texte s'affiche).</li>
+          <li>Sélectionne tout (Ctrl+A ou appui long → Tout sélectionner) puis copie.</li>
+          <li>Colle ci-dessous et clique sur Importer.</li>
+        </ol>
+        <textarea id="cnpaste" rows="3" placeholder="Colle ici le texte copié…"></textarea>
+        <div class="bar" style="margin:8px 0 0">
+          <button class="pri" data-act="cn-import">Importer</button>
+          <button data-act="cn-file">Depuis un fichier…</button>
+        </div>
+      </details>
+    </section>
+    ${cat ? `<section class="card filters">
+      <input id="cq" type="search" placeholder="Rechercher (marque, produit…)" value="${esc(o.q)}">
+      <select id="ccat"><option value="">Tous les rayons</option>${cats.map(k => `<option ${k === o.cat ? 'selected' : ''}>${esc(k)}</option>`).join('')}</select>
+      <select id="csort">${[['pct', 'Meilleur % de remise'], ['gain', 'Plus grosse remise (€)'], ['net', 'Prix net le plus bas'], ['end', 'Fin la plus proche']]
+        .map(([k, l]) => `<option value="${k}" ${k === o.sort ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <select id="cdest" title="Course où ajouter les produits">
+        ${courses.map(c => `<option value="${c.id}" ${c.id === o.dest ? 'selected' : ''}>Ajouter à : ${esc(c.name || 'Sans nom')}</option>`).join('')}
+        <option value="" ${o.dest ? '' : 'selected'}>Ajouter à : une nouvelle course</option>
+      </select>
+      <label><input type="checkbox" id="cpriced" ${o.priced ? 'checked' : ''}> Avec prix seulement</label>
+      <label><input type="checkbox" id="cbonus" ${o.bonus ? 'checked' : ''}> Compter les bonus quiz</label>
+    </section>
+    <div class="cat-grid" id="cgrid"></div>` : ''}`;
+  if (cat) renderOffers();
+}
+
+// Libellé du bouton d'ajout : nomme la course de destination pour éviter les erreurs
+function addLabel() {
+  const d = S.courses.find(c => c.id === catOpts().dest);
+  return d ? `+ Ajouter à « ${d.name || 'Sans nom'} »` : '+ Ajouter à une nouvelle course';
+}
+
+function renderOffers() {
+  const o = catOpts(), q = okey(o.q);
+  let list = S.catalog.offers
+    .filter(x => !x.end || x.end >= today())
+    .filter(x => !o.cat || x.cat === o.cat)
+    .filter(x => !q || okey(x.title + ' ' + x.sub).includes(q))
+    .map(x => ({ x, r: calcOffer(x) }))
+    .filter(({ r }) => !o.priced || r.price);
+  const sorters = {
+    // sans prix, les offres passent après celles qui ont un prix
+    pct: (a, b) => (!!b.r.price - !!a.r.price) || b.r.pct - a.r.pct || b.r.red - a.r.red,
+    gain: (a, b) => b.r.red - a.r.red,
+    net: (a, b) => (!!b.r.price - !!a.r.price) || a.r.net - b.r.net,
+    end: (a, b) => a.x.end.localeCompare(b.x.end),
+  };
+  list.sort(sorters[o.sort] || sorters.pct);
+  $('#cgrid').innerHTML = list.map(({ x }) => `<article class="card offer" data-oid="${x.id}">
+      <div class="otop"><span class="tag">${esc(x.cat)}</span>${x.units > 1 ? `<span class="tag">×${x.units} achetés</span>` : ''}<span class="mut">fin ${x.end ? new Date(x.end + 'T12:00').toLocaleDateString('fr-FR') : '?'}</span></div>
+      <div class="ohead">${x.img ? `<img class="oimg" src="${esc(x.img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+        <div><h3>${esc(x.title)}</h3><p class="osub">${esc(x.sub)}</p></div></div>
+      <div class="orow">
+        <label>Prix unitaire<input data-price inputmode="decimal" placeholder="0,00" value="${esc(S.prices?.[okey(x.title)] ?? '')}"></label>
+        <div class="ores"><b class="ok">−${eur(x.value + (o.bonus ? x.bonus : 0))}</b>${x.bonus ? `<small class="mut">${o.bonus ? 'dont' : '+'} ${eur(x.bonus)} quiz</small>` : ''}</div>
+      </div>
+      <div class="onet"><span data-o="net"></span><b class="ok" data-o="pct"></b></div>
+      <button data-act="cn-add">${esc(addLabel())}</button>
+    </article>`).join('') || '<p class="empty">Aucune offre ne correspond.</p>';
+  main.querySelectorAll('.offer').forEach(updateOffer);
+}
+
+function updateOffer(card) {
+  const x = S.catalog.offers.find(x => String(x.id) === card.dataset.oid);
+  const r = calcOffer(x);
+  setO(card, 'net', r.price ? `Net : ${eur(r.net)}${x.units > 1 ? ` (${eur(r.unit)} / u)` : ''}` : 'Saisis le prix pour calculer');
+  setO(card, 'pct', r.price ? '−' + pct(r.pct) : '');
+}
+
+function importOffers(txt) {
+  try {
+    const offers = parseOffers(txt);
+    S.catalog = { v: CAT_V, at: new Date().toISOString(), offers };
+    save(); renderCatalogue();
+  } catch { alert("Je n'ai pas reconnu la liste d'offres. Vérifie que tu as copié tout le texte de la page."); }
+}
+
+// ---------- Import d'un ticket PDF Carrefour ----------
+// PDF.js n'est chargé qu'au premier import (≈ 1,4 Mo)
+const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+function loadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = PDFJS + 'pdf.min.js';
+    s.onload = () => { pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js'; res(pdfjsLib); };
+    s.onerror = () => rej(new Error('Impossible de charger le lecteur PDF (connexion internet nécessaire au premier import).'));
+    document.head.appendChild(s);
+  });
+}
+
+// Texte du PDF reconstitué ligne par ligne (les morceaux de même hauteur forment une ligne)
+async function pdfLines(file) {
+  const lib = await loadPdfJs();
+  const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+  const lines = [];
+  for (let p = 1; p <= pdf.numPages; p++) {
+    const rows = [];
+    for (const it of (await (await pdf.getPage(p)).getTextContent()).items) {
+      if (!it.str.trim()) continue;
+      const x = it.transform[4], y = it.transform[5];
+      let r = rows.find(r => Math.abs(r.y - y) < 3);
+      if (!r) rows.push(r = { y, items: [] });
+      r.items.push({ x, s: it.str.trim() });
+    }
+    rows.sort((a, b) => b.y - a.y)
+      .forEach(r => lines.push(r.items.sort((a, b) => a.x - b.x).map(i => i.s).join(' ').replace(/\s+/g, ' ')));
+  }
+  return lines;
+}
+
+// Format du ticket Carrefour : « 5.5% 3X20CL CREM UHT SE 1 x 2.29 2.29 », suivi éventuellement
+// de « 0.15kg x 3.99€/kg » (produit pesé) et/ou « Remise immédiate -0.46 » (porte sur le produit au-dessus)
+// Page 2 : « Bons de réduction 0.70€ » (coupons papier en caisse), « Bons d achat 50.00€ » (carte cadeau),
+// « 0.78 € crédités sur votre compte » puis le détail de la cagnotte par produit (« ECHALOTE 0.07€ »).
+function parseTicket(lines) {
+  const t = { date: '', time: '', store: '', items: [], other: [], total: null, totalDisc: null, coupons: [], gifts: [], fidTotal: null };
+  let last = null, fidDetail = false;
+  lines.forEach((l, i) => {
+    let m;
+    if ((m = l.match(/^Bons? de r[ée]duction\s*(\d+[.,]\d+)\s*€?$/i))) { t.coupons.push(num(m[1])); return; }
+    if ((m = l.match(/^Bons? d.?\s?achat\s*(\d+[.,]\d+)\s*€?$/i))) { t.gifts.push({ value: num(m[1]), paid: '' }); return; }
+    if ((m = l.match(/^(\d+[.,]\d+)\s*€?\s*cr[ée]dit/i))) { t.fidTotal = num(m[1]); return; }
+    if (/^D[ée]tails? de vos avantages/i.test(l)) { fidDetail = true; return; }
+    if (fidDetail) {
+      // Ligne de détail rattachée au produit du même libellé ; les sous-totaux (« COUPONS 0.5€ ») sont ignorés
+      if ((m = l.match(/^(?:\(\d+\))?\s*(.+?)\s+(\d+[.,]\d+)\s*€$/))) {
+        const it = t.items.find(x => x.label === m[1].trim() && !x.fid);
+        if (it) it.fid = num(m[2]);
+      }
+      return;
+    }
+    if ((m = l.match(/(\d{2})\/(\d{2})\/(\d{4})\s*à\s*(\d{1,2})h(\d{2})/))) {
+      if (!t.date) { t.date = `${m[3]}-${m[2]}-${m[1]}`; t.time = `${m[4]}h${m[5]}`; }
+    } else if (/^T[ée]l\s*:/i.test(l)) {
+      if (!t.store && i) t.store = lines[i - 1];
+    } else if ((m = l.match(/^Total avant remises\s*(-?[\d.,]+)/i))) {
+      t.total = num(m[1]);
+    } else if ((m = l.match(/^Total remises imm[ée]diates\s*(-?[\d.,]+)/i))) {
+      t.totalDisc = Math.abs(num(m[1]));
+    } else if ((m = l.match(/^\d+(?:[.,]\d+)?\s*%\s+(.+?)\s+(\d+(?:[.,]\d+)?)\s*x\s*(\d+[.,]\d+)\s+(-?\d+[.,]\d+)$/))) {
+      last = { label: m[1].trim(), qty: num(m[2]), pu: num(m[3]), amount: num(m[4]), disc: 0, fid: 0, weight: '' };
+      t.items.push(last);
+    } else if (last && (m = l.match(/^([\d.,]+)\s*kg\s*x\s*[\d.,]+\s*€?\s*\/\s*kg$/i))) {
+      last.weight = m[1].replace('.', ',') + ' kg';
+    } else if (last && (m = l.match(/^(remise|r[ée]duction|avantage)\b.*?(-?\d+[.,]\d{2})\s*€?$/i))) {
+      last.disc += Math.abs(num(m[2]));
+    } else if (/\d[.,]\d{2}\s*€?$/.test(l) && !/^(Total|Carte bancaire|CB\b|Esp[eè]ces)/i.test(l)) {
+      t.other.push(l);
+    }
+  });
+  return t;
+}
+
+// Le ticket a une ligne par exemplaire : on regroupe les lignes identiques (même libellé, même prix)
+function mergeTicketItems(items) {
+  const out = [];
+  for (const it of items) {
+    const same = !it.weight && out.find(o => !o.weight && o.label === it.label && o.pu === it.pu);
+    if (same) { same.qty += it.qty; same.amount += it.amount; same.disc += it.disc; same.fid += it.fid; }
+    else out.push({ ...it });
+  }
+  return out;
+}
+
+// Rapprochement libellé abrégé ↔ offre : mots d'au moins 4 lettres qui se recouvrent (début de mot),
+// la marque compte double. Ce ne sont que des suggestions, rien n'est appliqué sans ton choix.
+const words = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase()
+  .split(/[^A-Z0-9]+/).filter(w => w.length >= 4 && !/\d/.test(w));
+function suggestOffers(label, offers) {
+  const lw = words(label);
+  const hits = ws => lw.filter(w => ws.some(o => o.startsWith(w) || w.startsWith(o))).length;
+  return offers.map(o => {
+    const [brand, ...rest] = o.title.split(/\s[-–]\s/);
+    return { key: okey(o.title), o, score: 2 * hits(words(brand)) + hits(words(rest.join(' ') + ' ' + o.sub)) };
+  }).filter(x => x.score >= 2).sort((a, b) => b.score - a.score).slice(0, 3);
+}
+
+let draft = null;   // ticket lu, en attente de validation (non enregistré)
+const ticketOffers = () => (S.catalog?.offers || []).filter(o => !o.end || !draft?.date || o.end >= draft.date);
+
+async function importTicket(file) {
+  const btn = main.querySelector('[data-act="tk-import"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Lecture du ticket…'; }
+  try {
+    const t = parseTicket(await pdfLines(file));
+    if (!t.items.length) throw new Error("Aucun produit reconnu dans ce PDF. Sa mise en page est peut-être différente : envoie-le moi pour que j'adapte la lecture.");
+    const offers = (S.catalog?.offers || []).filter(o => !o.end || !t.date || o.end >= t.date);
+    const keys = new Set(offers.map(o => okey(o.title)));
+    draft = {
+      ...t,
+      name: `Ticket du ${t.date ? new Date(t.date + 'T12:00').toLocaleDateString('fr-FR') : today()}`,
+      rows: mergeTicketItems(t.items).map(it => {
+        const k = okey(it.label), link = S.offerLinks?.[k];
+        return { ...it, name: S.aliases?.[k] || it.label, offer: link && keys.has(link) ? link : '', sug: suggestOffers(it.label, offers) };
+      }),
+      dest: '', match: {}, dropUnbought: false,
+    };
+    // Course préparée à l'avance pour ces achats ? (créée dans les 10 jours avant le ticket, pas déjà issue d'un ticket)
+    const day = n => isoDay(new Date(new Date((t.date || today()) + 'T12:00').getTime() + n * 864e5));
+    const planned = S.courses.filter(c => !c.ticket && c.items.length && c.date >= day(-10) && c.date <= day(2))
+      .sort((a, b) => b.date.localeCompare(a.date))[0];
+    if (planned) setDraftDest(planned.id);
+    location.hash = '#/ticket';
+  } catch (e) {
+    alert(e.message || 'Lecture du PDF impossible.');
+    if (btn) { btn.disabled = false; btn.textContent = '📄 Importer un ticket PDF'; }
+  }
+}
+
+// Rapprochement ligne du ticket ↔ produit prévu dans la course. Du plus sûr au moins sûr :
+// même libellé (déjà rapproché avant), même offre, nom retenu pour ce libellé, mots en commun.
+function matchScore(r, it) {
+  const base = it.name.replace(/ \([\d,]+ kg\)$/, '');
+  let s = 0;
+  if (it.label && it.label === r.label) s = 1000;
+  else if (r.offer && (it.offer || okey(base)) === r.offer) s = 900;
+  else if (S.aliases?.[okey(r.label)] && okey(S.aliases[okey(r.label)]) === okey(base)) s = 800;
+  else if (r.sug.some(x => x.key === (it.offer || okey(base)))) s = 500;
+  else {
+    const iw = words(base);
+    s = words(r.label).filter(w => iw.some(o => o.startsWith(w) || w.startsWith(o))).reduce((a, w) => a + w.length, 0);
+    if (s < 5) return 0;
+  }
+  // Même prix (le prix prévu vient souvent d'un ticket précédent) : départage les candidats
+  return s + (Math.abs(num(it.price) - r.pu) < 0.005 ? 50 : 0);
+}
+function setDraftDest(id) {
+  draft.dest = id; draft.match = {};
+  const c = S.courses.find(x => x.id === id);
+  if (!c) return;
+  const pairs = [];
+  draft.rows.forEach((r, i) => c.items.forEach(it => { const s = matchScore(r, it); if (s) pairs.push({ i, id: it.id, s }); }));
+  pairs.sort((a, b) => b.s - a.s);
+  const used = new Set();
+  for (const p of pairs) if (!(p.i in draft.match) && !used.has(p.id)) { draft.match[p.i] = p.id; used.add(p.id); }
+}
+
+function renderTicket() {
+  if (!draft) return (location.hash = '#/');
+  setHeader('Importer un ticket', true);
+  const offers = ticketOffers().sort((a, b) => a.title.localeCompare(b.title));
+  const byKey = new Map(offers.map(o => [okey(o.title), o]));
+  const dest = S.courses.find(c => c.id === draft.dest);
+  const matched = new Set(Object.values(draft.match));
+  const unbought = dest ? dest.items.filter(it => !matched.has(it.id)) : [];
+  const cnIds = cnGroup();
+  const itemOf = i => dest?.items.find(it => it.id === draft.match[i]);
+  const courses = [...S.courses].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const sum = draft.rows.reduce((a, r) => a + r.amount, 0), dsum = draft.rows.reduce((a, r) => a + r.disc, 0);
+  const fsum = draft.rows.reduce((a, r) => a + r.fid, 0), csum = draft.coupons.reduce((a, v) => a + v, 0);
+  const check = (got, want) => want === null ? '' : Math.abs(got - want) < 0.01 ? ' <span class="ok">✓</span>' : ` <span class="bad">⚠ le ticket indique ${eur(want)}</span>`;
+  const red = o => o.value + (catOpts().bonus ? o.bonus : 0);
+  const optLabel = o => esc(`${o.title} (−${eur(red(o))}${o.units > 1 ? `, ×${o.units}` : ''})`);
+  main.innerHTML = `
+    <section class="card">
+      <h2>${esc(draft.store || 'Ticket')} ${draft.date ? `<small>${new Date(draft.date + 'T12:00').toLocaleDateString('fr-FR')} à ${draft.time}</small>` : ''}</h2>
+      <p style="margin:4px 0">${draft.rows.length} produits · total ${eur(sum)}${check(sum, draft.total)} · remises immédiates ${eur(dsum)}${check(dsum, draft.totalDisc)}</p>
+      ${csum ? `<p style="margin:4px 0">Bons de réduction passés en caisse : <b>${eur(csum)}</b> <span class="mut">(${draft.coupons.length}, comptés en « Coupons » sur le ticket)</span></p>` : ''}
+      ${fsum || draft.fidTotal ? `<p style="margin:4px 0">Cagnotte Club Carrefour : <b>${eur(fsum)}</b> sur ${draft.rows.filter(r => r.fid).length} produit(s)${check(fsum, draft.fidTotal)}</p>` : ''}
+      ${draft.gifts.map((g, i) => `<p style="margin:4px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap">Payé avec un bon d'achat de <b>${eur(g.value)}</b> · acheté
+        <input data-tkg="${i}" inputmode="decimal" placeholder="${String(g.value.toFixed(2)).replace('.', ',')}" value="${esc(g.paid)}" style="width:90px"> €
+        <span class="mut" style="font-size:13px">(laisse vide si tu l'as payé plein tarif)</span></p>`).join('')}
+      <p class="mut" style="font-size:13px;margin:4px 0 10px">Corrige les noms abrégés si tu veux : l'app s'en souviendra au prochain ticket. Associe les offres Coupon Network utilisées (suggestions en tête de liste) ; le prix payé alimente aussi le catalogue.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <label class="mut" style="font-size:12px;display:flex;flex-direction:column;gap:3px;min-width:260px">Ajouter à
+          <select id="tkdest"><option value="">Une nouvelle course</option>
+            ${courses.map(c => `<option value="${c.id}" ${c.id === draft.dest ? 'selected' : ''}>${esc(c.name || 'Sans nom')}${c.date ? ' · ' + new Date(c.date + 'T12:00').toLocaleDateString('fr-FR') : ''}</option>`).join('')}
+          </select></label>
+        ${dest ? '' : `<label class="mut" style="font-size:12px;display:flex;flex-direction:column;gap:3px;min-width:260px">Nom de la course<input id="tkname" value="${esc(draft.name)}"></label>`}
+      </div>
+      ${dest ? `<p style="margin:10px 0 0;font-size:14px">Ajout à ta course prévue <b>« ${esc(dest.name)} »</b> : chaque ligne du ticket est rapprochée d'un produit prévu (colonne « Prévu »).
+        Tes remises calculées sont gardées ; le ticket ajoute le vrai prix, la quantité, les remises de caisse et la cagnotte. Les lignes non rapprochées sont ajoutées comme nouveaux produits.</p>
+        ${unbought.length ? `<p style="margin:6px 0 0;font-size:14px" class="warn">Prévus mais pas sur le ticket : ${unbought.map(it => esc(it.name || 'sans nom')).join(', ')}</p>
+          <label class="chk" style="margin:4px 0 0"><input type="checkbox" id="tkdrop" ${draft.dropUnbought ? 'checked' : ''}> Les retirer de la course (non achetés)</label>` : ''}` : ''}
+    </section>
+    <label class="chk"><input type="checkbox" id="tkonly" ${S.ui?.tkOnlyCn ? 'checked' : ''}> Seulement les produits avec une offre Coupon Network (suggérée ou choisie)
+      ${S.ui?.tkOnlyCn ? `<span class="mut">· ${draft.rows.filter(r => !r.offer && !r.sug.length).length} autres masqués (ils seront quand même dans la course)</span>` : ''}</label>
+    <div class="tablewrap scroll"><table class="grid left tk">
+      <thead><tr><th>Produit</th>${dest ? '<th>Prévu</th>' : ''}<th class="num">Qté</th><th class="num">P.U.</th><th class="num">Remise caisse</th><th class="num">Cagnotte</th><th>Offre Coupon Network</th></tr></thead>
+      <tbody>${draft.rows.map((r, i) => { const o = byKey.get(r.offer), it = itemOf(i);
+        const plannedCn = it && cnIds.length && filled(it.d?.[cnIds[0]]) ? it.d[cnIds[0]] : '';
+        if (S.ui?.tkOnlyCn && !r.offer && !r.sug.length && !plannedCn) return '';
+        return `<tr data-tk="${i}">
+        <td class="name" data-label="Produit"><span class="tkname"><input data-tkf="name" value="${esc(r.name)}"><small class="mut">${esc(r.label)}${r.weight ? ' · ' + r.weight : ''}</small></span></td>
+        ${dest ? `<td data-label="Prévu"><select data-tkm style="max-width:240px" class="${it ? '' : 'new'}">
+            <option value="">➕ Nouveau produit</option>
+            ${dest.items.map(x => `<option value="${x.id}" ${x.id === draft.match[i] ? 'selected' : ''}>${esc(x.name || 'sans nom')}${matched.has(x.id) && x.id !== draft.match[i] ? ' (déjà rapproché)' : ''}</option>`).join('')}
+          </select></td>` : ''}
+        <td class="num" data-label="Quantité">${String(r.qty).replace('.', ',')}</td>
+        <td class="num" data-label="Prix unitaire">${eur(r.pu)}</td>
+        <td class="num ${r.disc ? 'ok' : 'mut'}" data-label="Remise caisse">${r.disc ? '−' + eur(r.disc) : '—'}</td>
+        <td class="num ${r.fid ? 'ok' : 'mut'}" data-label="Cagnotte">${r.fid ? '+' + eur(r.fid) : '—'}</td>
+        <td data-label="Offre CN">${offers.length ? `<select data-tko style="max-width:280px">
+            <option value="">—</option>
+            ${r.sug.length ? `<optgroup label="Suggestions">${r.sug.map(s => `<option value="${esc(s.key)}" ${s.key === r.offer ? 'selected' : ''}>${optLabel(s.o)}</option>`).join('')}</optgroup>` : ''}
+            <optgroup label="Toutes les offres">${offers.map(x => { const k = okey(x.title); return `<option value="${esc(k)}" ${k === r.offer && !r.sug.some(s => s.key === k) ? 'selected' : ''}>${optLabel(x)}</option>`; }).join('')}</optgroup>
+          </select>${o && o.units > r.qty ? `<br><small class="warn">⚠ offre valable pour ${o.units} exemplaires</small>` : ''}` : '<span class="mut">Catalogue vide</span>'}
+          ${plannedCn && !r.offer ? `<br><small class="ok">prévu dans la course : −${esc(plannedCn)} € (gardé)</small>` : ''}</td>
+      </tr>`; }).join('')}</tbody>
+    </table></div>
+    ${draft.other.length ? `<details class="card"><summary>${draft.other.length} ligne(s) non reconnue(s)</summary>
+      <ul class="mut" style="font-size:13px">${draft.other.map(l => `<li>${esc(l)}</li>`).join('')}</ul></details>` : ''}
+    <div class="bar"><button class="pri" data-act="tk-create">${dest ? `Ajouter à « ${esc(dest.name)} »` : 'Créer la course'}</button><button data-act="tk-cancel">Annuler</button></div>`;
+}
+
+function promoSource() {
+  let s = S.sources.find(s => /promo\s*magasin/i.test(s.name));
+  if (!s) { s = { id: uid(), name: 'Promo magasin', unit: '%', deferred: false, archived: false }; S.sources.push(s); }
+  s.archived = false;
+  return s;
+}
+
+// Source (créée si besoin) reconnue par son nom
+function sourceNamed(re, def) {
+  let s = S.sources.find(s => re.test(s.name));
+  if (!s) { s = { id: uid(), archived: false, ...def }; S.sources.push(s); }
+  s.archived = false;
+  return s;
+}
+
+// Remises lues sur le ticket pour une ligne : remise de caisse, cagnotte gagnée, offre CN choisie
+function ticketDiscounts(r, o) {
+  const d = {}, st = {};
+  if (r.disc) d[promoSource().id] = fr2(r.disc) + '€';
+  if (r.fid) {
+    // La cagnotte gagnée est créditée sur le compte fidélité : remise différée, déjà « acceptée »
+    const club = sourceNamed(/club carrefour/i, { name: 'Club Carrefour', unit: '€', deferred: true });
+    d[club.id] = fr2(r.fid) + '€'; st[club.id] = 'accepte';
+  }
+  if (o) { applyOffer(d, o); (S.prices ||= {})[r.offer] = fr2(r.pu); }
+  return { d, st };
+}
+// Mémoire pour les prochains tickets : nom retenu et offre associée à ce libellé
+function rememberLabel(r, name, offer) {
+  const k = okey(r.label);
+  if (name && name !== r.label) (S.aliases ||= {})[k] = name;
+  if (offer) (S.offerLinks ||= {})[k] = offer;
+  else if (S.offerLinks?.[k]) delete S.offerLinks[k];
+}
+const ticketQty = r => String(r.qty).replace('.', ',');
+function newTicketItem(r, o, d, st) {
+  rememberLabel(r, r.name.trim(), r.offer);
+  return { id: uid(), name: (r.name.trim() || r.label) + (r.weight ? ` (${r.weight})` : ''), label: r.label,
+    qty: ticketQty(r), price: fr2(r.pu), img: o?.img || '', offer: r.offer || '', d, st };
+}
+// Ce qui concerne tout le ticket : bons de réduction papier (pas rattachés à un produit) et bons d'achat
+// (sans prix payé indiqué, on le considère payé plein tarif : pas de gain)
+function addTicketExtras(c) {
+  const csum = draft.coupons.reduce((a, v) => a + v, 0);
+  if (csum) (c.global ||= {})[sourceNamed(/^coupons?$/i, { name: 'Coupons', unit: '€', deferred: false }).id] = fr2(csum) + '€';
+  (c.vouchers ||= []).push(...draft.gifts.map(g => ({ id: uid(), name: "Bon d'achat", value: fr2(g.value), paid: g.paid || fr2(g.value), used: '' })));
+  c.ticket = true;
+}
+
+function createFromTicket() {
+  const byKey = new Map(ticketOffers().map(o => [okey(o.title), o]));
+  const items = draft.rows.map(r => { const o = byKey.get(r.offer), { d, st } = ticketDiscounts(r, o); return newTicketItem(r, o, d, st); });
+  const store = draft.store ? 'Carrefour ' + draft.store.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase()) : 'Carrefour';
+  const c = { id: uid(), name: $('#tkname').value || draft.name, date: draft.date || today(), store, items, global: {} };
+  addTicketExtras(c);
+  S.courses.push(c); draft = null; save();
+  location.hash = '#/course/' + c.id;
+}
+
+// Ticket ajouté à une course préparée : les produits rapprochés gardent leurs remises calculées
+// et reçoivent le réel du ticket ; les autres lignes deviennent de nouveaux produits.
+function mergeTicket() {
+  const c = S.courses.find(x => x.id === draft.dest);
+  const byKey = new Map(ticketOffers().map(o => [okey(o.title), o]));
+  const matched = new Set(Object.values(draft.match));
+  const unbought = new Set(c.items.filter(it => !matched.has(it.id)).map(it => it.id));
+  draft.rows.forEach((r, i) => {
+    const o = byKey.get(r.offer), { d, st } = ticketDiscounts(r, o);
+    const it = c.items.find(x => x.id === draft.match[i]);
+    if (!it) return c.items.push(newTicketItem(r, o, d, st));
+    Object.assign(it.d ||= {}, d);
+    Object.assign(it.st ||= {}, st);
+    Object.assign(it, { label: r.label, qty: ticketQty(r), price: fr2(r.pu) });
+    if (o) { it.offer = r.offer; it.img ||= o.img; }
+    // Offre prévue dans la course (sans offre choisie sur le ticket) : le prix payé alimente aussi le catalogue
+    const po = o || offerOf(it);
+    if (po) (S.prices ||= {})[okey(po.title)] = fr2(r.pu);
+    rememberLabel(r, r.name !== r.label ? r.name.trim() : it.name.replace(/ \([\d,]+ kg\)$/, ''), r.offer || it.offer);
+  });
+  if (draft.dropUnbought) c.items = c.items.filter(it => !unbought.has(it.id));
+  if (draft.date) c.date = draft.date;
+  if (!c.store && draft.store) c.store = 'Carrefour ' + draft.store.toLowerCase().replace(/(^|\s)\S/g, x => x.toUpperCase());
+  addTicketExtras(c);
+  draft = null; save();
+  location.hash = '#/course/' + c.id;
+}
+
+// ---------- Vue : bilan & statistiques ----------
+const PERIODS = { all: 'Depuis le début', '12m': '12 derniers mois', year: 'Cette année', month: 'Ce mois-ci' };
+function inPeriod(date, p) {
+  const d = date || '', t = today();
+  if (p === 'month') return d.slice(0, 7) === t.slice(0, 7);
+  if (p === 'year') return d.slice(0, 4) === t.slice(0, 4);
+  if (p === '12m') { const s = new Date(); s.setFullYear(s.getFullYear() - 1); return d > isoDay(s); }
+  return true;
+}
+const monthLabel = (ym, style = 'short') => new Date(ym + '-15T12:00').toLocaleDateString('fr-FR', { month: style, year: style === 'short' ? '2-digit' : 'numeric' });
+
+// Toutes les remises différées d'une course (produits + ticket), avec leur statut
+function cashbackEntries(c) {
+  const r = calcCourse(c), out = [];
+  const defs = r.cols.filter(s => s.deferred);
+  c.items.forEach((it, i) => {
+    for (const s of defs) {
+      const raw = it.d?.[s.id];
+      if (filled(raw)) out.push({ c, it, s, name: it.name || 'Produit', amount: disc(raw, s, r.rows[i].base), st: it.st?.[s.id] || 'attente' });
+    }
+  });
+  const gBase = r.rows.reduce((a, x) => a + x.base - x.now, 0);
+  for (const s of defs) {
+    const raw = c.global?.[s.id];
+    if (filled(raw)) out.push({ c, it: null, s, name: 'Ticket entier', amount: disc(raw, s, gBase), st: c.gst?.[s.id] || 'attente' });
+  }
+  return out;
+}
+
+function renderBilan() {
+  setHeader('Bilan', true);
+  const p = (S.ui ||= {}).period || 'all';
+  const cs = S.courses.filter(c => inPeriod(c.date, p));
+  const tot = { base: 0, saved: 0, final: 0, vgain: 0, caisse: 0, cb: 0 };
+  const bySrc = new Map(), byMonth = new Map(), deals = [];
+  for (const c of cs) {
+    const r = calcCourse(c);
+    tot.base += r.base; tot.saved += r.saved; tot.final += r.final; tot.vgain += r.vgain; tot.caisse += r.caisse; tot.cb += r.cbTotal;
+    for (const s of r.cols) {
+      if (!r.per[s.id]) continue;
+      const e = bySrc.get(s.id) || { s, total: 0, ...newCb() };
+      e.total += r.per[s.id]; bySrc.set(s.id, e);
+    }
+    const m = (c.date || '').slice(0, 7);
+    if (m) {
+      const e = byMonth.get(m) || { base: 0, saved: 0, n: 0, caisse: 0, cb: 0 };
+      e.base += r.base; e.saved += r.saved; e.caisse += r.caisse; e.cb += r.cbTotal; e.n++; byMonth.set(m, e);
+    }
+    r.rows.forEach((x, i) => { if (x.base && x.disc > 0) deals.push({ name: c.items[i].name || 'Produit', pct: x.pct, disc: x.disc, date: c.date }); });
+  }
+  // Détail par statut des sources différées (y compris le perdu, qui n'est pas dans r.per)
+  for (const c of cs) for (const e of cashbackEntries(c)) {
+    const b = bySrc.get(e.s.id) || { s: e.s, total: 0, ...newCb() };
+    b[LOST.includes(e.st) ? 'perdu' : e.st] += e.amount; bySrc.set(e.s.id, b);
+  }
+  const srcRows = [...bySrc.values()].sort((a, b) => b.total - a.total);
+
+  // Cashback à recevoir : toutes périodes, les plus anciens d'abord (ceux à relancer)
+  const pending = S.courses.flatMap(cashbackEntries).filter(e => e.st === 'attente' || e.st === 'litige')
+    .sort((a, b) => (a.c.date || '').localeCompare(b.c.date || ''));
+  const pend = pending.reduce((a, e) => a + e.amount, 0);
+
+  // 12 derniers mois de la période, du plus ancien au plus récent
+  const months = [...byMonth.keys()].sort().slice(-12);
+  const maxSaved = Math.max(0, ...months.map(m => byMonth.get(m).saved));
+  deals.sort((a, b) => b.pct - a.pct);
+
+  const stSel = e => `<select class="st" data-bst="${e.s.id}" data-cid="${e.c.id}" data-iid="${e.it?.id || ''}" data-state="${e.st}">
+    ${Object.entries(ST).map(([k, l]) => `<option value="${k}" ${k === e.st ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+  const age = d => d ? Math.floor((new Date(today()) - new Date(d)) / 864e5) : null;
+
+  main.innerHTML = `
+    <div class="bar"><select id="bperiod" style="width:auto">${Object.entries(PERIODS).map(([k, l]) => `<option value="${k}" ${k === p ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+    <section class="tiles">
+      <div><small>Courses</small><b>${cs.length}</b></div>
+      <div><small>Prix d'origine</small><b>${eur(tot.base)}</b></div>
+      <div class="hl"><small>Économisé</small><b class="ok">${eur(tot.saved)}</b><small>${pct(tot.base ? tot.saved / tot.base : 0)} du prix d'origine</small></div>
+      <div><small>Coût final</small><b>${eur(tot.final)}</b></div>
+      <div title="Cashback attendu (en attente, en litige ou reçu) rapporté au montant payé en caisse"><small>Cashback</small><b class="ok">${pct(tot.caisse > 0 ? tot.cb / tot.caisse : 0)}</b><small>${eur(tot.cb)} sur ${eur(tot.caisse)} payés</small></div>
+      <div><small>Cashback à recevoir</small><b>${eur(pend)}</b><small>toutes périodes</small></div>
+    </section>
+
+    <section class="card">
+      <h2>Cashback à recevoir <small>${pending.length} remboursement${pending.length > 1 ? 's' : ''} en attente ou en litige</small></h2>
+      ${pending.length ? `<div class="tablewrap flat"><table class="grid left">
+        <thead><tr><th>Date</th><th>Course</th><th>Produit</th><th>Source</th><th class="num">Montant</th><th>Statut</th></tr></thead>
+        <tbody>${pending.map(e => { const a = age(e.c.date); return `<tr>
+          <td data-label="Date">${e.c.date ? new Date(e.c.date + 'T12:00').toLocaleDateString('fr-FR') : '?'}${a !== null ? ` <span class="${a > 30 ? 'warn' : 'mut'}">(${a} j)</span>` : ''}</td>
+          <td data-label="Course"><a href="#/course/${e.c.id}" style="text-decoration:underline">${esc(e.c.name || 'Sans nom')}</a></td>
+          <td data-label="Produit">${esc(e.name)}</td>
+          <td data-label="Source">${esc(e.s.name)}</td>
+          <td class="num strong" data-label="Montant">${eur(e.amount)}</td>
+          <td data-label="Statut">${stSel(e)}</td></tr>`; }).join('')}</tbody>
+      </table></div><p class="mut" style="font-size:13px;margin:8px 0 0">Change le statut ici quand un remboursement arrive. Au-delà de 30 jours, la date passe en orange : pense à relancer.</p>` : '<p class="mut">Rien en attente. 🎉</p>'}
+    </section>
+
+    <section class="card">
+      <h2>Par source <small>${PERIODS[p].toLowerCase()}</small></h2>
+      ${srcRows.length || tot.vgain ? `<div class="tablewrap flat"><table class="grid left">
+        <thead><tr><th>Source</th><th class="num">Économisé</th><th class="num">Reçu</th><th class="num">En attente</th><th class="num">En litige</th><th class="num">Perdu</th><th class="num">Taux de refus</th></tr></thead>
+        <tbody>${srcRows.map(e => { const all = e.accepte + e.attente + e.litige + e.perdu, d = e.s.deferred; return `<tr>
+          <td data-label="Source"><b>${esc(e.s.name)}</b>${d ? ' <span class="mut">différé</span>' : ''}</td>
+          <td class="num ok strong" data-label="Économisé">${eur(e.total)}</td>
+          <td class="num" data-label="Reçu">${d ? eur(e.accepte) : ''}</td>
+          <td class="num" data-label="En attente">${d ? eur(e.attente) : ''}</td>
+          <td class="num" data-label="En litige">${d ? eur(e.litige) : ''}</td>
+          <td class="num ${e.perdu ? 'bad' : ''}" data-label="Perdu">${d ? eur(e.perdu) : ''}</td>
+          <td class="num" data-label="Taux de refus">${d && all ? pct(e.perdu / all) : ''}</td></tr>`; }).join('')}
+          ${tot.vgain ? `<tr><td data-label="Source"><b>Bons d'achat</b></td><td class="num ok strong" data-label="Économisé">${eur(tot.vgain)}</td><td></td><td></td><td></td><td></td><td></td></tr>` : ''}
+        </tbody></table></div>` : '<p class="mut">Aucune remise sur la période.</p>'}
+    </section>
+
+    <section class="card">
+      <h2>Économies par mois</h2>
+      ${months.length ? `<div class="chart" role="img" aria-label="Économies par mois">
+          <span class="ymax">${eur(maxSaved)}</span>
+          ${months.map(m => { const e = byMonth.get(m); return `<div class="col" data-tip="${monthLabel(m, 'long')} : ${eur(e.saved)} (${pct(e.base ? e.saved / e.base : 0)})">
+            <div class="bar" style="height:${maxSaved ? e.saved / maxSaved * 100 : 0}%"></div></div>`; }).join('')}
+        </div>
+        <div class="xlabels">${months.map(m => `<span>${monthLabel(m)}</span>`).join('')}</div>
+        <div class="tablewrap flat" style="margin-top:12px"><table class="grid left">
+          <thead><tr><th>Mois</th><th class="num">Courses</th><th class="num">Prix d'origine</th><th class="num">Économisé</th><th class="num">%</th><th class="num">Cashback</th></tr></thead>
+          <tbody>${[...months].reverse().map(m => { const e = byMonth.get(m); return `<tr>
+            <td data-label="Mois"><b>${monthLabel(m, 'long')}</b></td><td class="num" data-label="Courses">${e.n}</td>
+            <td class="num" data-label="Prix d'origine">${eur(e.base)}</td><td class="num ok strong" data-label="Économisé">${eur(e.saved)}</td>
+            <td class="num" data-label="%">${pct(e.base ? e.saved / e.base : 0)}</td>
+            <td class="num" data-label="Cashback">${eur(e.cb)} <span class="mut">(${pct(e.caisse > 0 ? e.cb / e.caisse : 0)})</span></td></tr>`; }).join('')}</tbody>
+        </table></div>` : '<p class="mut">Pas encore de courses datées sur la période.</p>'}
+    </section>
+
+    <section class="card">
+      <h2>Meilleures affaires <small>par % de remise</small></h2>
+      ${deals.length ? `<ol class="deals">${deals.slice(0, 8).map(d => `<li><b>${esc(d.name)}</b> : <span class="ok strong">−${pct(d.pct)}</span>
+        <span class="mut">(${eur(d.disc)} de remise${d.date ? ', ' + new Date(d.date + 'T12:00').toLocaleDateString('fr-FR') : ''})</span></li>`).join('')}</ol>` : '<p class="mut">Aucune remise sur la période.</p>'}
+    </section>`;
+}
+
+// ---------- Vue : sources ----------
+function renderSources() {
+  setHeader('Sources de remise', true);
+  const act = S.sources.filter(s => !s.archived), arch = S.sources.filter(s => s.archived);
+  main.innerHTML = `
+    <section class="card">
+      <h2>Sources actives</h2>
+      <p class="mut">Communes à toutes les courses. L'unité est celle par défaut des cases (tu peux toujours taper « 20% » ou « 1€ »).
+      « Différé » = remboursé après coup (cashback, appli), donc pas déduit du montant à payer en caisse.
+      Chaque remise différée a un statut (en attente, accepté, en litige, refusé, non dispo) ; refusé et non dispo ne sont pas comptés.
+      « Même remise que » : la case se remplit toute seule avec la remise de l'autre source (tu peux toujours la modifier ou la vider).</p>
+      ${act.map((s, i) => `<div class="srow" data-sid="${s.id}">
+        <input data-sn value="${esc(s.name)}">
+        <select data-su><option ${s.unit === '€' ? 'selected' : ''}>€</option><option ${s.unit === '%' ? 'selected' : ''}>%</option></select>
+        <label><input type="checkbox" data-sd ${s.deferred ? 'checked' : ''}> Différé</label>
+        <select data-sl title="Recopier par défaut la remise d'une autre source">
+          <option value="">Remise propre</option>
+          ${act.filter(m => m !== s).map(m => `<option value="${m.id}" ${s.copyFrom === m.id ? 'selected' : ''}>Même remise que ${esc(m.name)}</option>`).join('')}
+        </select>
+        <button class="ico" data-act="src-up" ${i ? '' : 'disabled'} title="Monter">↑</button>
+        <button class="ico" data-act="src-down" ${i < act.length - 1 ? '' : 'disabled'} title="Descendre">↓</button>
+        <button class="ico danger" data-act="src-del" title="Supprimer">✕</button>
+      </div>`).join('') || '<p class="mut">Aucune source.</p>'}
+      <div class="addsrc">
+        <input id="nsn" placeholder="Nouvelle source (ex. Lidl Plus)">
+        <select id="nsu"><option>€</option><option>%</option></select>
+        <label><input type="checkbox" id="nsd"> Différé</label>
+        <button class="pri" data-act="add-src">Ajouter</button>
+      </div>
+    </section>
+    ${arch.length ? `<section class="card"><h2>Sources archivées</h2>
+      <p class="mut">Elles restent visibles dans les anciennes courses qui les utilisent.</p>
+      ${arch.map(s => `<div class="srow" data-sid="${s.id}" style="grid-template-columns:1fr auto">
+        <span>${esc(s.name)} <span class="mut">(${s.unit})</span></span>
+        <button data-act="src-restore">Réactiver</button></div>`).join('')}
+    </section>` : ''}
+    <section class="card">
+      <h2>Sauvegarde</h2>
+      <p class="mut">Les données sont stockées dans ce navigateur. Exporte un fichier pour les sauvegarder (ex. dans OneDrive) ou les transférer sur un autre appareil.
+      ${canAutoBackup ? `La sauvegarde automatique écrit « ${BK_FILE} » dans le dossier de ton choix à chaque modification ; pour restaurer, utilise Importer.` : ''}</p>
+      <p class="mut" id="bkinfo"></p>
+      <div class="bar" style="margin:0">
+        <button data-act="export">Exporter (.json)</button>
+        <button data-act="import">Importer…</button>
+      </div>
+    </section>`;
+  refreshBackupUi();
+}
+
+// ---------- Événements ----------
+main.addEventListener('input', e => {
+  const t = e.target, c = current();
+  if (t.dataset.price !== undefined) {
+    const card = t.closest('.offer');
+    const x = S.catalog.offers.find(x => String(x.id) === card.dataset.oid);
+    (S.prices ||= {})[okey(x.title)] = t.value;
+    save(); return updateOffer(card);
+  }
+  if (t.id === 'cq') { catOpts().q = t.value; save(); return renderOffers(); }
+  if (t.dataset.tkf) { draft.rows[t.closest('tr').dataset.tk].name = t.value; return; }
+  if (t.dataset.tkg) { draft.gifts[t.dataset.tkg].paid = t.value; return; }
+  if (t.dataset.sn !== undefined) {
+    const s = S.sources.find(x => x.id === t.closest('[data-sid]').dataset.sid);
+    s.name = t.value; return save();
+  }
+  if (!c) return;
+  const tr = t.closest('tr[data-item]'), vr = t.closest('tr[data-vid]');
+  if (vr && t.dataset.v) {
+    c.vouchers.find(v => v.id === vr.dataset.vid)[t.dataset.v] = t.value;
+  } else if (tr) {
+    const it = c.items.find(i => i.id === tr.dataset.item);
+    if (t.dataset.f) it[t.dataset.f] = t.value;
+    // Produit venant d'un ticket renommé : on retient le nom pour ce libellé abrégé
+    if (t.dataset.f === 'name' && it.label && t.value.trim()) (S.aliases ||= {})[okey(it.label)] = t.value.trim().replace(/ \([\d,]+ kg\)$/, '');
+    // Prix corrigé dans la course : on met aussi à jour le prix retenu par le catalogue pour ce produit
+    if (t.dataset.f === 'price') {
+      const k = okey(it.name);
+      if (S.prices?.[k] !== undefined || S.catalog?.offers.some(x => okey(x.title) === k)) (S.prices ||= {})[k] = t.value;
+    }
+    if (t.dataset.src) {
+      const d = it.d ||= {}, prev = d[t.dataset.src];
+      d[t.dataset.src] = t.value;
+      const m = S.sources.find(s => s.id === t.dataset.src), o = cnGroup()[0] === m.id ? offerOf(it) : null;
+      copyLinked(d, t.dataset.src, prev).forEach(id => {
+        if (withQuiz(o, t.value)) d[id] = withUnit(fr2(o.value), m, S.sources.find(s => s.id === id));
+        const i = tr.querySelector(`input[data-src="${id}"]`); if (i) i.value = d[id];
+      });
+    }
+  } else if (t.dataset.g) {
+    const d = c.global ||= {}, prev = d[t.dataset.g];
+    d[t.dataset.g] = t.value;
+    const g = t.closest('tr');
+    copyLinked(d, t.dataset.g, prev).forEach(id => { const i = g.querySelector(`input[data-g="${id}"]`); if (i) i.value = d[id]; });
+  } else if (t.dataset.c) {
+    c[t.dataset.c] = t.value;
+    if (t.dataset.c === 'name') $('#title').textContent = t.value || 'Course';
+  }
+  save(); updateOut(c);
+});
+
+main.addEventListener('change', e => {
+  const t = e.target, c = current();
+  if (t.id === 'tkdest') { setDraftDest(t.value); return renderTicket(); }
+  if (t.id === 'tkdrop') { draft.dropUnbought = t.checked; return; }
+  if (t.dataset.tkm !== undefined) {
+    const i = t.closest('tr').dataset.tk;
+    // Un produit prévu ne correspond qu'à une ligne du ticket : on le retire de l'ancienne
+    for (const k in draft.match) if (draft.match[k] === t.value) delete draft.match[k];
+    if (t.value) draft.match[i] = t.value; else delete draft.match[i];
+    return renderTicket();
+  }
+  if (t.id === 'tkonly') { (S.ui ||= {}).tkOnlyCn = t.checked; save(); return renderTicket(); }
+  if (t.dataset.tko !== undefined) {
+    draft.rows[t.closest('tr').dataset.tk].offer = t.value;
+    return renderTicket();
+  }
+  if (t.id === 'bperiod') { (S.ui ||= {}).period = t.value; save(); return renderBilan(); }
+  if (t.dataset.bst) {
+    const co = S.courses.find(x => x.id === t.dataset.cid);
+    const it = co.items.find(i => i.id === t.dataset.iid);
+    if (it) (it.st ||= {})[t.dataset.bst] = t.value;
+    else (co.gst ||= {})[t.dataset.bst] = t.value;
+    save(); return renderBilan();
+  }
+  const filt = { ccat: 'cat', csort: 'sort', cdest: 'dest', cpriced: 'priced', cbonus: 'bonus' }[t.id];
+  if (filt) {
+    catOpts()[filt] = t.type === 'checkbox' ? t.checked : t.value;
+    save(); return renderOffers();
+  }
+  if (c && (t.dataset.st || t.dataset.gst)) {
+    if (t.dataset.st) (c.items.find(i => i.id === t.closest('tr').dataset.item).st ||= {})[t.dataset.st] = t.value;
+    else (c.gst ||= {})[t.dataset.gst] = t.value;
+    t.dataset.state = t.value;
+    save(); return updateOut(c);
+  }
+  // Colonnes vides masquées : une colonne remplie (ou vidée) apparaît (ou disparaît) en quittant la case
+  if (c && S.ui?.hideEmpty && (t.dataset.src || t.dataset.g)) {
+    if (visibleCols(c).length !== main.querySelectorAll('th.src').length) renderCourse(c);
+    return;
+  }
+  const row = t.closest('[data-sid]');
+  if (!row) return;
+  const s = S.sources.find(x => x.id === row.dataset.sid);
+  if (t.dataset.su !== undefined) s.unit = t.value;
+  if (t.dataset.sd !== undefined) s.deferred = t.checked;
+  if (t.dataset.sl !== undefined) s.copyFrom = t.value;
+  save();
+});
+
+main.addEventListener('keydown', e => {
+  // Entrée dans la dernière ligne = nouveau produit ; sinon passe à la ligne suivante
+  if (e.key !== 'Enter' || !e.target.matches('tr[data-item] input')) return;
+  e.preventDefault();
+  const tr = e.target.closest('tr');
+  const key = e.target.dataset.f ? `[data-f="${e.target.dataset.f}"]` : `[data-src="${e.target.dataset.src}"]`;
+  const next = tr.nextElementSibling;
+  if (next) next.querySelector(key)?.focus();
+  else addItem(current());
+});
+
+// Suppression annulable : `restore` remet l'élément en place pendant quelques secondes
+let undoFn = null, toastTimer = null;
+function removed(msg, restore) {
+  undoFn = restore;
+  $('#toastmsg').textContent = msg;
+  $('#toast').hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { $('#toast').hidden = true; undoFn = null; }, 7000);
+}
+function removeAt(list, el) {
+  const i = list.indexOf(el);
+  list.splice(i, 1);
+  return () => list.splice(i, 0, el);
+}
+
+// Repère de colonne : la colonne de la case en cours de saisie (ou survolée) est surlignée, en-tête compris
+function markCol(e) {
+  const active = document.activeElement?.closest?.('table.grid td');
+  if (e.type === 'mouseover' && active) return;   // pendant la saisie, la colonne de la saisie reste marquée
+  main.querySelectorAll('.colhl').forEach(x => x.classList.remove('colhl'));
+  const cell = (e.type === 'focusout' ? null : e.target.closest?.('td,th'));
+  const table = cell?.closest('table.items, table.tk');
+  // Rien en affichage « fiches » (téléphone), où l'en-tête est masqué
+  if (!table || cell.cellIndex <= 0 || getComputedStyle(table.tHead).display === 'none') return;
+  for (const row of table.rows) row.cells[cell.cellIndex]?.classList.add('colhl');
+}
+main.addEventListener('focusin', markCol);
+main.addEventListener('focusout', markCol);
+main.addEventListener('mouseover', markCol);
+
+function addItem(c) {
+  c.items.push({ id: uid(), name: '', qty: '1', price: '', d: {} });
+  save(); renderCourse(c);
+  const inputs = main.querySelectorAll('td.name input[data-f="name"]');
+  inputs[inputs.length - 1].focus();
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const a = b.dataset.act, c = current();
+  const cid = b.closest('[data-cid]')?.dataset.cid;
+  const sid = b.closest('[data-sid]')?.dataset.sid;
+  const src = S.sources.find(s => s.id === sid);
+
+  if (a === 'go-sources') location.hash = '#/sources';
+  else if (a === 'go-catalogue') location.hash = '#/catalogue';
+  else if (a === 'go-bilan') location.hash = '#/bilan';
+  else if (a === 'tk-import') $('#tkfile').click();
+  else if (a === 'tk-create') draft.dest ? mergeTicket() : createFromTicket();
+  else if (a === 'tk-cancel') { draft = null; location.hash = '#/'; }
+  else if (a === 'bk-enable') enableAutoBackup().then(refreshBackupUi);
+  else if (a === 'bk-resume') resumeAutoBackup().then(refreshBackupUi);
+  else if (a === 'cn-import') importOffers($('#cnpaste').value);
+  else if (a === 'cn-file') $('#cnfile').click();
+  else if (a === 'cn-add') {
+    const x = S.catalog.offers.find(x => String(x.id) === b.closest('.offer').dataset.oid);
+    const o = catOpts();
+    let dest = S.courses.find(c => c.id === o.dest);
+    if (!dest) {
+      dest = { id: uid(), name: 'Courses du ' + new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }), date: today(), store: 'Carrefour', items: [], global: {} };
+      S.courses.push(dest); o.dest = dest.id;
+    }
+    // La remise Coupon Network porte sur la ligne entière (les « ×2 » sont pour 2 produits achetés)
+    const d = {};
+    applyOffer(d, x);
+    dest.items.push({ id: uid(), name: x.title, qty: String(x.units), price: S.prices?.[okey(x.title)] ?? '', img: x.img, offer: okey(x.title), d });
+    save();
+    if (!$('#cdest').value) renderCatalogue();
+    const btn = main.querySelector(`.offer[data-oid="${x.id}"] [data-act="cn-add"]`);
+    btn.textContent = `✓ Ajouté à « ${dest.name} »`; btn.disabled = true;
+    setTimeout(() => { btn.textContent = addLabel(); btn.disabled = false; }, 1800);
+  }
+  else if (a === 'new-course') {
+    const n = { id: uid(), name: 'Courses du ' + new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }), date: today(), store: '', items: [], global: {} };
+    S.courses.push(n); save(); location.hash = '#/course/' + n.id;
+  }
+  else if (a === 'dup-course') {
+    const o = S.courses.find(x => x.id === cid);
+    const n = JSON.parse(JSON.stringify(o));
+    n.id = uid(); n.name = o.name + ' (copie)'; n.date = today();
+    // Nouvelle course : les statuts de cashback repartent « en attente » et les bons d'achat sont vidés
+    n.items.forEach(it => { it.id = uid(); delete it.st; });
+    delete n.gst; n.vouchers = [];
+    S.courses.push(n); save(); location.hash = '#/course/' + n.id;
+  }
+  else if (a === 'del-course') {
+    const o = S.courses.find(x => x.id === cid);
+    if (confirm(`Supprimer « ${o.name} » ?`)) { removed(`Course « ${o.name} » supprimée`, removeAt(S.courses, o)); save(); renderList(); }
+  }
+  else if (a === 'undo') {
+    if (undoFn) { undoFn(); undoFn = null; save(); route(); }
+    $('#toast').hidden = true;
+  }
+  else if (a === 'add-item') addItem(c);
+  else if (a === 'col-toggle' || a === 'src-filter' || a === 'cols-all') {
+    const ui = S.ui ||= {};
+    // Filtre par source : ses produits et ses colonnes (+ sources liées) ; « Tous » / « Toutes » réaffichent tout
+    if (a === 'cols-all' || (a === 'src-filter' && !b.dataset.col)) { ui.hiddenCols = []; ui.hideEmpty = false; ui.rowSrc = ''; }
+    else if (a === 'src-filter') {
+      const grp = srcGroup(b.dataset.col);
+      ui.rowSrc = b.dataset.col;
+      ui.hiddenCols = S.sources.filter(s => !grp.includes(s.id)).map(s => s.id);
+    } else {
+      const id = b.dataset.col, off = ui.hiddenCols ||= [];
+      ui.hiddenCols = off.includes(id) ? off.filter(x => x !== id) : [...off, id];
+    }
+    save(); renderCourse(c);
+  }
+  else if (a === 'toggle-cols') { (S.ui ||= {}).hideEmpty = !S.ui.hideEmpty; save(); renderCourse(c); }
+  else if (a === 'del-item') {
+    const it = c.items.find(i => i.id === b.closest('tr').dataset.item);
+    removed(`« ${it.name || 'Produit'} » supprimé`, removeAt(c.items, it));
+    save(); renderCourse(c);
+  }
+  else if (a === 'add-v') {
+    (c.vouchers ||= []).push({ id: uid(), name: '', value: '', paid: '', used: '' });
+    save(); renderCourse(c);
+    const inputs = main.querySelectorAll('input[data-v="name"]');
+    inputs[inputs.length - 1].focus();
+  }
+  else if (a === 'del-v') {
+    const v = c.vouchers.find(v => v.id === b.closest('tr').dataset.vid);
+    removed(`Bon « ${v.name || "d'achat"} » supprimé`, removeAt(c.vouchers, v));
+    save(); renderCourse(c);
+  }
+  else if (a === 'add-src') {
+    const name = $('#nsn').value.trim();
+    if (!name) return $('#nsn').focus();
+    S.sources.push({ id: uid(), name, unit: $('#nsu').value, deferred: $('#nsd').checked, archived: false });
+    save(); renderSources(); $('#nsn').focus();
+  }
+  else if (a === 'src-up' || a === 'src-down') {
+    const act = S.sources.filter(s => !s.archived);
+    const i = act.indexOf(src), j = a === 'src-up' ? i - 1 : i + 1;
+    [act[i], act[j]] = [act[j], act[i]];
+    S.sources = [...act, ...S.sources.filter(s => s.archived)];
+    save(); renderSources();
+  }
+  else if (a === 'src-del') {
+    const used = S.courses.some(c => c.items.some(it => String(it.d?.[sid] ?? '').trim()) || String(c.global?.[sid] ?? '').trim());
+    if (used) {
+      if (confirm(`« ${src.name} » est utilisée dans des courses existantes. Elle sera archivée (masquée pour les nouvelles courses, conservée dans les anciennes). Continuer ?`)) { src.archived = true; save(); renderSources(); }
+    } else if (confirm(`Supprimer « ${src.name} » ?`)) {
+      S.sources = S.sources.filter(s => s !== src); save(); renderSources();
+    }
+  }
+  else if (a === 'src-restore') { src.archived = false; save(); renderSources(); }
+  else if (a === 'export') {
+    const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+    const l = document.createElement('a');
+    l.href = URL.createObjectURL(blob); l.download = `promo-courses-${today()}.json`;
+    l.click(); setTimeout(() => URL.revokeObjectURL(l.href), 1000);
+    markBackup(); refreshBackupUi();
+  }
+  else if (a === 'import') $('#importfile').click();
+});
+
+$('#tkfile').addEventListener('change', e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (f) importTicket(f);
+});
+
+$('#cnfile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (f) importOffers(await f.text());
+});
+
+$('#importfile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!Array.isArray(d.sources) || !Array.isArray(d.courses)) throw 0;
+    if (confirm(`Remplacer les données actuelles par ce fichier (${d.courses.length} courses, ${d.sources.length} sources) ?`)) { S = d; save(); route(); }
+  } catch { alert("Fichier invalide."); }
+});
+
+// Une seule fois : iGraal et eBuyClub relaient les mêmes offres que Coupon Network,
+// on les lie par défaut (modifiable dans ⚙ Sources)
+if (!S.linksInit) {
+  const cn = S.sources.find(s => /coupon\s*network/i.test(s.name));
+  if (cn) {
+    S.sources.forEach(s => { if (/igraal|ebuy/i.test(s.name) && !s.copyFrom) s.copyFrom = cn.id; });
+    S.linksInit = true; save();
+  }
+}
+syncOffersFile();
+// Une seule fois : avant, le bonus quiz Coupon Network était aussi recopié vers iGraal / eBuyClub
+// (2e version : retrouve aussi l'offre des produits importés d'un ticket, par leur libellé)
+if (!S.quizFix2) {
+  const ids = cnGroup();
+  if (ids.length) for (const c of S.courses) for (const it of c.items) {
+    const o = offerOf(it);
+    if (!withQuiz(o, it.d?.[ids[0]])) continue;
+    for (const id of ids.slice(1)) if (filled(it.d[id]) && Math.abs(num(it.d[id]) - num(it.d[ids[0]])) < 0.005) it.d[id] = fr2(o.value);
+  }
+  S.quizFix2 = true; save();
+}
+route();
+loadBackupDir().then(refreshBackupUi);
+</script>
+</body>
+</html>
