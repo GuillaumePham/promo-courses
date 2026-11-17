@@ -1,10 +1,11 @@
-# Récupère les offres Coupon Network chaque mercredi (nouvelles offres) et jeudi (rattrapage),
-# et met à jour offres.js : l'app en ligne charge ainsi le catalogue à jour sur tous les appareils.
+# Récupère les offres Coupon Network et met à jour offres.js dans le dépôt.
+# Pour l'instant, c'est le PC qui publie les offres chaque semaine (tâche Windows + recuperer_offres.py) :
+# les Actions GitHub sont bloquées sur ce compte. Une fois débloquées, on peut remettre la planification :
+#   schedule:
+#     - cron: "30 9 * * 3,4"   # mercredi et jeudi, 9 h 30 UTC
 name: Offres Coupon Network
 
 on:
-  schedule:
-    - cron: "30 9 * * 3,4"   # mercredi et jeudi, 9 h 30 UTC (10 h 30 en hiver, 11 h 30 en été)
   workflow_dispatch:          # bouton « Run workflow » pour lancer à la main
 
 permissions:

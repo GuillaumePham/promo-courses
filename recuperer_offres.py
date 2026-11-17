@@ -2,10 +2,15 @@
 
 L'app (index.html) charge offres.js à l'ouverture et met son catalogue à jour toute seule.
 Les offres changent le mercredi : une récupération par semaine suffit.
+Si le dossier est le dépôt git de l'app en ligne, offres.js est aussi envoyé sur GitHub
+(la version en ligne, ouverte sur la tablette, est alors à jour).
 
 Usage : double-clic sur « Recuperer les offres.bat », ou  python recuperer_offres.py [--silencieux]
 """
 import json
+import os
+import shutil
+import subprocess
 import sys
 import urllib.request
 from datetime import datetime
@@ -24,7 +29,36 @@ def journal(msg):
         f.write(ligne + "\n")
 
 
+def git(*args):
+    exe = shutil.which("git") or r"C:\Program Files\Git\cmd\git.exe"
+    return subprocess.run([exe, *args], cwd=DOSSIER, capture_output=True, text=True, timeout=120,
+                          creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+
+
+def en_ligne():
+    # Pas sur GitHub Actions (la tâche du dépôt publie elle-même) et seulement dans le dépôt de l'app
+    return not os.environ.get("GITHUB_ACTIONS") and (DOSSIER / ".git").exists()
+
+
+def publier():
+    """Envoie offres.js sur GitHub, ce qui met à jour l'app en ligne."""
+    git("add", "offres.js")
+    if git("diff", "--cached", "--quiet", "--", "offres.js").returncode == 0:
+        return journal("En ligne : offres déjà à jour")
+    c = git("commit", "-m", f"Offres Coupon Network du {datetime.now():%d/%m/%Y}", "--", "offres.js")
+    p = git("push")
+    if c.returncode or p.returncode:
+        raise RuntimeError("envoi sur GitHub impossible : " + (p.stderr or c.stderr).strip()[-300:])
+    journal("En ligne : offres envoyées sur GitHub")
+
+
 def main():
+    if en_ligne():
+        # Récupère d'abord les éventuelles mises à jour en ligne, pour pouvoir envoyer ensuite sans conflit
+        r = git("pull", "--rebase", "--autostash", "-q")
+        if r.returncode:
+            journal("Attention : mise à jour depuis GitHub impossible : " + r.stderr.strip()[-200:])
+
     req = urllib.request.Request(URL, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=30) as r:
         data = json.load(r)
@@ -39,6 +73,8 @@ def main():
     tmp.write_text("window.CN_OFFERS = " + json.dumps(contenu, ensure_ascii=False) + ";\n", encoding="utf-8")
     tmp.replace(SORTIE)
     journal(f"OK : {len(items)} offres enregistrées dans {SORTIE.name}")
+    if en_ligne():
+        publier()
 
 
 if __name__ == "__main__":
